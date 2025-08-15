@@ -2,12 +2,33 @@ import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { useAuthenticator } from "@aws-amplify/ui-react";
+import { fetchAuthSession } from "aws-amplify/auth";
 
 const client = generateClient<Schema>();
+async function getUserGroups() {
+  try {
+    const session = await fetchAuthSession();
+    const idTokenPayload = session.tokens?.idToken?.payload;
+
+    const groups = idTokenPayload?.["cognito:groups"] || [];
+    console.log("User groups:", groups);
+    return groups;
+  } catch (error) {
+    console.error("Error fetching user groups:", error);
+    return [];
+  }
+}
 
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
   const { signOut } = useAuthenticator();
+
+  useEffect(() => {
+    getUserGroups().then((groups) => {
+      // Do something with the user groups
+      console.log("User groups:", groups);
+    });
+  }, []);
 
   useEffect(() => {
     client.models.Todo.observeQuery().subscribe({
