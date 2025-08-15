@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Medico from "./components/Medico";
 import Patient from "./components/Patient";
 import Home from "./components/Home"; // your current todos view
