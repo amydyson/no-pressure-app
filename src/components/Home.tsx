@@ -6,6 +6,7 @@ import { fetchAuthSession } from "aws-amplify/auth";
 // import type { Schema } from "../../amplify/data/resource";
 import Medico from "./Medico";
 import Patient from "./Patient";
+import Box from "@mui/material/Box";
 
 // const client = generateClient<Schema>();
 
@@ -41,7 +42,18 @@ function Home() {
 
   if (!group) return null; // or a loading spinner
 
-  return group === "Medico" ? <Medico /> : <Patient />;
+  return (
+    <Box
+      minHeight="100vh"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      bgcolor="rgb(227, 242, 253)"
+      width="100vw"
+    >
+      {group === "Medico" ? <Medico /> : <Patient />}
+    </Box>
+  );
 }
 
 //   useEffect(() => {
