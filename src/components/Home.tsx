@@ -49,11 +49,15 @@ function Home() {
 
   useEffect(() => {
     getUserInfo().then((info) => {
+      console.log("=== HOME COMPONENT USER INFO ===");
       console.log("User logged in:", {
         userId: info.userId,
         email: info.email,
         groups: info.groups
       });
+      console.log("Full payload sub:", info.userId);
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("===============================");
       
       setUserInfo(info);
       

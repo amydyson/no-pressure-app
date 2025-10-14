@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
-import { TextField, FormHelperText, Box, Button, Alert } from "@mui/material";
+import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const schema = z.object({
   firstName: z
@@ -32,6 +32,8 @@ interface PatientProps {
 const Patient = ({ userInfo }: PatientProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const {
     register,
@@ -42,11 +44,66 @@ const Patient = ({ userInfo }: PatientProps) => {
     resolver: zodResolver(schema),
   });
 
+  // Check for existing patient record when component loads
+  useEffect(() => {
+    const checkExistingPatient = async () => {
+      if (!userInfo?.userId) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        // Query for patient records with this userId
+        const response = await client.models.Patient.list({
+          filter: {
+            userId: {
+              eq: userInfo.userId
+            }
+          }
+        });
+
+        if (response.data && response.data.length > 0) {
+          // Patient record exists
+          setExistingPatient(response.data[0]); // Get the first record
+          console.log("Existing patient found:", response.data[0]);
+        } else {
+          // No patient record found
+          setExistingPatient(null);
+          console.log("No existing patient record found");
+        }
+      } catch (error) {
+        console.error("Error checking for existing patient:", error);
+        setExistingPatient(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkExistingPatient();
+  }, [userInfo?.userId]);
+
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitMessage(null);
     
     try {
+      console.log("=== USER ID DEBUG INFO ===");
+      console.log("Current userInfo:", userInfo);
+      console.log("UserID:", userInfo?.userId);
+      console.log("Email:", userInfo?.email);
+      console.log("Groups:", userInfo?.groups);
+      
+      // Let's also fetch fresh session info to compare
+      const { fetchAuthSession } = await import("aws-amplify/auth");
+      const freshSession = await fetchAuthSession();
+      const freshPayload = freshSession.tokens?.idToken?.payload;
+      
+      console.log("=== FRESH SESSION COMPARISON ===");
+      console.log("Fresh sub:", freshPayload?.sub);
+      console.log("Fresh email:", freshPayload?.email);
+      console.log("Are they the same?", userInfo?.userId === freshPayload?.sub);
+      console.log("================================");
+      
       console.log("Submitting patient data for user:", {
         userId: userInfo?.userId,
         email: userInfo?.email,
@@ -87,8 +144,61 @@ const Patient = ({ userInfo }: PatientProps) => {
     }
   };
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
+
+  // Existing patient screen
+  if (existingPatient) {
+    return (
+      <Paper 
+        sx={{
+          p: 4,
+          maxWidth: 600,
+          mx: 'auto',
+          textAlign: 'center',
+          bgcolor: 'white',
+          borderRadius: 2,
+          boxShadow: 3
+        }}
+      >
+        <Typography variant="h4" gutterBottom color="primary">
+          Welcome Back!
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          {existingPatient.firstName} {existingPatient.lastName}
+        </Typography>
+        <Typography variant="body1" color="text.secondary" paragraph>
+          Your patient profile is already set up.
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Email: {existingPatient.email || userInfo?.email}
+        </Typography>
+        <Box sx={{ mt: 3 }}>
+          <Button 
+            variant="outlined" 
+            onClick={() => {
+              setExistingPatient(null); // Allow them to update their info
+            }}
+          >
+            Update Information
+          </Button>
+        </Box>
+      </Paper>
+    );
+  }
+
+  // New patient form
   return (
     <>
+      <Typography variant="h5" textAlign="center" mb={3}>
+        Create Your Patient Profile
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
           sx={{
