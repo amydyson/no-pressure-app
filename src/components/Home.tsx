@@ -10,16 +10,28 @@ import Box from "@mui/material/Box";
 
 // const client = generateClient<Schema>();
 
-async function getUserGroups(): Promise<string[]> {
+async function getUserInfo(): Promise<{
+  groups: string[];
+  userId: string | null;
+  email: string | null;
+}> {
   try {
     const session = await fetchAuthSession();
-    const groupsRaw = session.tokens?.idToken?.payload["cognito:groups"] || [];
-    return Array.isArray(groupsRaw)
+    const payload = session.tokens?.idToken?.payload;
+    
+    const groupsRaw = payload?.["cognito:groups"] || [];
+    const groups = Array.isArray(groupsRaw)
       ? groupsRaw.filter((g) => typeof g === "string")
       : [];
+    
+    return {
+      groups,
+      userId: typeof payload?.sub === 'string' ? payload.sub : null,
+      email: typeof payload?.email === 'string' ? payload.email : null,
+    };
   } catch (error) {
-    console.error("Error fetching user groups:", error);
-    return [];
+    console.error("Error fetching user info:", error);
+    return { groups: [], userId: null, email: null };
   }
 }
 
@@ -29,10 +41,23 @@ function Home() {
   //   const navigate = useNavigate();
 
   const [group, setGroup] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<{
+    userId: string | null;
+    email: string | null;
+    groups: string[];
+  } | null>(null);
 
   useEffect(() => {
-    getUserGroups().then((groups) => {
-      if (groups.includes("Medico")) {
+    getUserInfo().then((info) => {
+      console.log("User logged in:", {
+        userId: info.userId,
+        email: info.email,
+        groups: info.groups
+      });
+      
+      setUserInfo(info);
+      
+      if (info.groups.includes("Medico")) {
         setGroup("Medico");
       } else {
         setGroup("Patient");
@@ -51,7 +76,11 @@ function Home() {
       bgcolor="rgb(227, 242, 253)"
       width="100vw"
     >
-      {group === "Medico" ? <Medico /> : <Patient />}
+      {group === "Medico" ? (
+        <Medico userInfo={userInfo} />
+      ) : (
+        <Patient userInfo={userInfo} />
+      )}
     </Box>
   );
 }

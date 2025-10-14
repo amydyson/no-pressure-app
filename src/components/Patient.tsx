@@ -21,7 +21,15 @@ type FormData = z.infer<typeof schema>;
 
 const client = generateClient<Schema>();
 
-const Patient = () => {
+interface PatientProps {
+  userInfo: {
+    userId: string | null;
+    email: string | null;
+    groups: string[];
+  } | null;
+}
+
+const Patient = ({ userInfo }: PatientProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   
@@ -39,10 +47,24 @@ const Patient = () => {
     setSubmitMessage(null);
     
     try {
-      // Submit to the database
+      console.log("Submitting patient data for user:", {
+        userId: userInfo?.userId,
+        email: userInfo?.email,
+        firstName: data.firstName,
+        lastName: data.lastName
+      });
+      
+      // Ensure we have a userId before creating the record
+      if (!userInfo?.userId) {
+        throw new Error('User ID not available. Please refresh and try again.');
+      }
+
+      // Submit to the database with userId as key
       const response = await client.models.Patient.create({
+        userId: userInfo.userId,
         firstName: data.firstName,
         lastName: data.lastName,
+        email: userInfo.email || undefined,
       });
       
       if (response.data) {
