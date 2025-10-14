@@ -34,6 +34,7 @@ const Patient = ({ userInfo }: PatientProps) => {
   const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   
   const {
     register,
@@ -116,22 +117,53 @@ const Patient = ({ userInfo }: PatientProps) => {
         throw new Error('User ID not available. Please refresh and try again.');
       }
 
-      // Submit to the database with userId as key
-      const response = await client.models.Patient.create({
-        userId: userInfo.userId,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: userInfo.email || undefined,
-      });
+      let response;
+      
+      if (isEditing) {
+        // Update existing patient record
+        // First, find the existing patient ID by querying with userId
+        const existingRecords = await client.models.Patient.list({
+          filter: {
+            userId: {
+              eq: userInfo.userId
+            }
+          }
+        });
+        
+        if (existingRecords.data && existingRecords.data.length > 0) {
+          const existingId = existingRecords.data[0].id;
+          response = await client.models.Patient.update({
+            id: existingId,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: userInfo.email || undefined,
+          });
+        } else {
+          throw new Error('Could not find existing patient record to update');
+        }
+      } else {
+        // Create new patient record
+        response = await client.models.Patient.create({
+          userId: userInfo.userId,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: userInfo.email || undefined,
+        });
+      }
       
       if (response.data) {
+        // Set the patient data and show success message
+        setExistingPatient(response.data);
         setSubmitMessage({
           type: 'success',
-          text: `Patient ${data.firstName} ${data.lastName} has been successfully added!`
+          text: isEditing 
+            ? `Patient information updated successfully!`
+            : `Patient ${data.firstName} ${data.lastName} has been successfully added!`
         });
+        setIsEditing(false); // Reset editing state
         reset(); // Clear the form
       } else {
-        throw new Error('Failed to create patient record');
+        throw new Error(isEditing ? 'Failed to update patient record' : 'Failed to create patient record');
       }
     } catch (error) {
       console.error('Error creating patient:', error);
@@ -167,37 +199,93 @@ const Patient = ({ userInfo }: PatientProps) => {
           boxShadow: 3
         }}
       >
+        {/* Success message if just created */}
+        {submitMessage && (
+          <Box sx={{ mb: 3 }}>
+            <Alert severity={submitMessage.type}>
+              {submitMessage.text}
+            </Alert>
+          </Box>
+        )}
+        
         <Typography variant="h4" gutterBottom color="primary">
-          Welcome Back!
+          Patient Information
         </Typography>
-        <Typography variant="h6" gutterBottom>
-          {existingPatient.firstName} {existingPatient.lastName}
-        </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Your patient profile is already set up.
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Email: {existingPatient.email || userInfo?.email}
-        </Typography>
-        <Box sx={{ mt: 3 }}>
+        
+        {/* Patient Details */}
+        <Box sx={{ mt: 3, textAlign: 'left', bgcolor: 'grey.50', p: 3, borderRadius: 2 }}>
+          <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'auto 1fr' }}>
+            <Typography variant="body1" fontWeight="bold">
+              First Name:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.firstName}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Last Name:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.lastName}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Email:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.email || userInfo?.email || 'Not provided'}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Created:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.createdAt ? new Date(existingPatient.createdAt).toLocaleDateString() : 'Unknown'}
+            </Typography>
+          </Box>
+        </Box>
+        
+        {/* Action Buttons */}
+        <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Button 
             variant="outlined" 
             onClick={() => {
-              setExistingPatient(null); // Allow them to update their info
+              setIsEditing(true); // Set editing mode
+              setExistingPatient(null); // Show the form
+              setSubmitMessage(null); // Clear success message
+              
+              // Pre-populate the form with existing data
+              reset({
+                firstName: existingPatient.firstName,
+                lastName: existingPatient.lastName
+              });
             }}
           >
-            Update Information
+            Edit Information
+          </Button>
+          
+          <Button 
+            variant="contained" 
+            color="primary"
+            size="large"
+            onClick={() => {
+              // TODO: Navigate to next page
+              console.log("Navigate to next page");
+              alert("Next page functionality - coming soon!");
+            }}
+          >
+            Next →
           </Button>
         </Box>
       </Paper>
     );
   }
 
-  // New patient form
+  // New patient form or edit form
   return (
     <>
       <Typography variant="h5" textAlign="center" mb={3}>
-        Create Your Patient Profile
+        {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
@@ -245,15 +333,53 @@ const Patient = ({ userInfo }: PatientProps) => {
           </Box>
         </Box>
         
-        {/* Submit Button */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        {/* Submit and Cancel Buttons */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+          {isEditing && (
+            <Button 
+              variant="outlined" 
+              onClick={() => {
+                // Cancel editing - go back to patient info view
+                setIsEditing(false);
+                setSubmitMessage(null);
+                // Re-query to get the existing patient data
+                const restorePatientData = async () => {
+                  if (userInfo?.userId) {
+                    try {
+                      const response = await client.models.Patient.list({
+                        filter: {
+                          userId: {
+                            eq: userInfo.userId
+                          }
+                        }
+                      });
+                      if (response.data && response.data.length > 0) {
+                        setExistingPatient(response.data[0]);
+                      }
+                    } catch (error) {
+                      console.error('Error restoring patient data:', error);
+                    }
+                  }
+                };
+                restorePatientData();
+                reset(); // Clear form
+              }}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+          )}
+          
           <Button 
             type="submit" 
             variant="contained" 
             disabled={isSubmitting}
-            sx={{ minWidth: 120 }}
+            sx={{ minWidth: 140 }}
           >
-            {isSubmitting ? 'Submitting...' : 'Add Patient'}
+            {isSubmitting 
+              ? (isEditing ? 'Updating...' : 'Submitting...') 
+              : (isEditing ? 'Make change' : 'Add Patient')
+            }
           </Button>
         </Box>
         
