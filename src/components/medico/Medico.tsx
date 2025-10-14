@@ -13,13 +13,11 @@ const Medico = ({ userInfo }: MedicoProps) => {
   });
 
   return (
-    <>
-      <div>
-        <h2>Medico Dashboard</h2>
-        <p>Welcome, {userInfo?.email}</p>
-        <p>User ID: {userInfo?.userId}</p>
-      </div>
-    </>
+    <div style={{padding: '2rem', textAlign: 'center'}}>
+      <h2>Medico Dashboard</h2>
+      <p>Welcome, {userInfo?.email}</p>
+      <p>This is the Medico interface - Coming Soon!</p>
+    </div>
   );
 };
 

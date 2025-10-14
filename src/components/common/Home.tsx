@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
-// import { useAuthenticator } from "@aws-amplify/ui-react";
 import { fetchAuthSession } from "aws-amplify/auth";
-// import { useNavigate } from "react-router-dom";
-// import { generateClient } from "aws-amplify/data";
-// import type { Schema } from "../../amplify/data/resource";
-import Medico from "./Medico";
-import Patient from "./Patient";
+import { Routes, Route } from "react-router-dom";
+import Medico from "../medico/Medico";
+import PatientRouter from "../PatientRouter";
 import Box from "@mui/material/Box";
-
-// const client = generateClient<Schema>();
 
 async function getUserInfo(): Promise<{
   groups: string[];
@@ -36,10 +31,6 @@ async function getUserInfo(): Promise<{
 }
 
 function Home() {
-  //   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  //   const { signOut } = useAuthenticator();
-  //   const navigate = useNavigate();
-
   const [group, setGroup] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<{
     userId: string | null;
@@ -63,8 +54,16 @@ function Home() {
       
       if (info.groups.includes("Medico")) {
         setGroup("Medico");
+        // Auto-navigate to medico routes
+        if (window.location.pathname === '/') {
+          window.history.replaceState(null, '', '/medico');
+        }
       } else {
         setGroup("Patient");
+        // Auto-navigate to patient routes
+        if (window.location.pathname === '/') {
+          window.history.replaceState(null, '', '/patient');
+        }
       }
     });
   }, []);
@@ -80,53 +79,19 @@ function Home() {
       bgcolor="rgb(227, 242, 253)"
       width="100vw"
     >
-      {group === "Medico" ? (
-        <Medico userInfo={userInfo} />
-      ) : (
-        <Patient userInfo={userInfo} />
-      )}
+      <Routes>
+        <Route path="/medico/*" element={<Medico userInfo={userInfo} />} />
+        <Route path="/patient/*" element={<PatientRouter userInfo={userInfo} />} />
+        <Route path="/" element={
+          group === "Medico" ? (
+            <Medico userInfo={userInfo} />
+          ) : (
+            <PatientRouter userInfo={userInfo} />
+          )
+        } />
+      </Routes>
     </Box>
   );
 }
-
-//   useEffect(() => {
-//     getUserGroups().then((groups) => {
-//       if (groups.includes("Medico")) {
-//         navigate("/medico");
-//       } else {
-//         navigate("/patient");
-//       }
-//     });
-//   }, []);
-
-//   useEffect(() => {
-//     client.models.Todo.observeQuery().subscribe({
-//       next: (data) => setTodos([...data.items]),
-//     });
-//   }, []);
-
-//   function createTodo() {
-//     client.models.Todo.create({ content: window.prompt("Todo content") });
-//   }
-
-//   function deleteTodo(id: string) {
-//     client.models.Todo.delete({ id });
-//   }
-
-//   return (
-//     <main>
-//       <button onClick={signOut}>Sign out</button>
-//       <h1>My todos</h1>
-//       <button onClick={createTodo}>+ new</button>
-//       <ul>
-//         {todos.map((todo) => (
-//           <li onClick={() => deleteTodo(todo.id)} key={todo.id}>
-//             {todo.content}
-//           </li>
-//         ))}
-//       </ul>
-//     </main>
-//   );
-// }
 
 export default Home;

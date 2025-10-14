@@ -3,8 +3,9 @@ import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper } from
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../../amplify/data/resource";
+import type { Schema } from "../../../amplify/data/resource";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   firstName: z
@@ -30,6 +31,7 @@ interface PatientProps {
 }
 
 const Patient = ({ userInfo }: PatientProps) => {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
@@ -269,9 +271,8 @@ const Patient = ({ userInfo }: PatientProps) => {
             color="primary"
             size="large"
             onClick={() => {
-              // TODO: Navigate to next page
-              console.log("Navigate to next page");
-              alert("Next page functionality - coming soon!");
+              // Navigate to medical history page
+              navigate('/patient/medical-history');
             }}
           >
             Next →
