@@ -17,13 +17,13 @@ const schema = a.schema({
       userId: a.string().required(), // Cognito user ID as key
       firstName: a.string().required(),
       lastName: a.string().required(),
-      email: a.string().required(), // Required: store email for easy reference
-      gender: a.string().required(), // Required: male or female
-      isSmoker: a.boolean().required(), // Required: smoker status
-      age: a.integer().required(), // Required: patient age
-      height: a.float().required(), // Required: height in cm
-      weight: a.float().required(), // Required: weight in kg
-      exercisesDaily: a.boolean().required(), // Required: exercises 30+ minutes daily
+      email: a.string(), // Optional: store email for easy reference
+      gender: a.string(), // Optional: male or female
+      isSmoker: a.boolean(), // Optional: smoker status
+      age: a.integer(), // Optional: patient age
+      height: a.float(), // Optional: height in cm
+      weight: a.float(), // Optional: weight in kg
+      exercisesDaily: a.boolean(), // Optional: exercises 30+ minutes daily
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });

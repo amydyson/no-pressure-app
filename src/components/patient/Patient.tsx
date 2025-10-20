@@ -16,18 +16,20 @@ const schema = z.object({
     .string()
     .min(2, { message: "Must be at least 2 characters" })
     .max(100, { message: "Must not exceed 100 characters" }),
-  gender: z.string().min(1, { message: "Gender is required" }),
   age: z
-    .number({ invalid_type_error: "Age is required and must be a number" })
+    .number({ invalid_type_error: "Age must be a number" })
     .int({ message: "Age must be a whole number" })
     .min(1, { message: "Age must be at least 1" })
-    .max(150, { message: "Age must be less than 150" }),
+    .max(150, { message: "Age must be less than 150" })
+    .optional(),
   height: z
-    .number({ invalid_type_error: "Height is required and must be a number" })
-    .positive({ message: "Height must be positive" }),
+    .number({ invalid_type_error: "Height must be a number" })
+    .positive({ message: "Height must be positive" })
+    .optional(),
   weight: z
-    .number({ invalid_type_error: "Weight is required and must be a number" })
-    .positive({ message: "Weight must be positive" }),
+    .number({ invalid_type_error: "Weight must be a number" })
+    .positive({ message: "Weight must be positive" })
+    .optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -62,6 +64,9 @@ const Patient = ({ userInfo }: PatientProps) => {
     resolver: zodResolver(schema),
   });
 
+  // Debug validation errors
+  console.log("Current form validation errors:", errors);
+
   // Check for existing patient record when component loads
   useEffect(() => {
     const checkExistingPatient = async () => {
@@ -82,12 +87,19 @@ const Patient = ({ userInfo }: PatientProps) => {
 
         if (response.data && response.data.length > 0) {
           // Patient record exists
-          setExistingPatient(response.data[0]); // Get the first record
-          // Set all state variables from existing data
-          setGender(response.data[0].gender || "female");
-          setIsSmoker(response.data[0].isSmoker || false);
-          setExercisesDaily(response.data[0].exercisesDaily || false);
-          console.log("Existing patient found:", response.data[0]);
+          const patientData = response.data[0];
+          if (patientData) {
+            setExistingPatient(patientData); // Get the first record
+            // Set all state variables from existing data with safe access
+            setGender(patientData.gender || "female");
+            setIsSmoker(patientData.isSmoker || false);
+            setExercisesDaily(patientData.exercisesDaily || false);
+            console.log("Existing patient found:", patientData);
+          } else {
+            // Patient data is null
+            setExistingPatient(null);
+            console.log("Patient data is null");
+          }
         } else {
           // No patient record found
           setExistingPatient(null);
@@ -96,6 +108,10 @@ const Patient = ({ userInfo }: PatientProps) => {
       } catch (error) {
         console.error("Error checking for existing patient:", error);
         setExistingPatient(null);
+        // Reset state variables to defaults on error
+        setGender("female");
+        setIsSmoker(false);
+        setExercisesDaily(false);
       } finally {
         setIsLoading(false);
       }
@@ -105,6 +121,9 @@ const Patient = ({ userInfo }: PatientProps) => {
   }, [userInfo?.userId]);
 
   const onSubmit = async (data: FormData) => {
+    console.log("=== onSubmit FUNCTION CALLED ===");
+    console.log("This means the form validation passed and submission started");
+    
     setIsSubmitting(true);
     setSubmitMessage(null);
     
@@ -145,6 +164,11 @@ const Patient = ({ userInfo }: PatientProps) => {
       if (!userInfo?.userId) {
         throw new Error('User ID not available. Please refresh and try again.');
       }
+      
+      // Ensure we have a userId before creating the record
+      if (!userInfo.email) {
+        console.warn('User email not available, using empty string');
+      }
 
       let response;
       
@@ -167,26 +191,26 @@ const Patient = ({ userInfo }: PatientProps) => {
           console.log("Update data:", {
             firstName: data.firstName,
             lastName: data.lastName,
-            email: userInfo.email || "",
-            gender: gender,
-            isSmoker: isSmoker,
-            age: data.age,
-            height: data.height,
-            weight: data.weight,
-            exercisesDaily: exercisesDaily,
+            email: userInfo.email || undefined,
+            gender: gender || undefined,
+            isSmoker: isSmoker !== undefined ? isSmoker : undefined,
+            age: data.age || undefined,
+            height: data.height || undefined,
+            weight: data.weight || undefined,
+            exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
           });
           
           response = await client.models.Patient.update({
             id: existingId,
             firstName: data.firstName,
             lastName: data.lastName,
-            email: userInfo.email || "",
-            gender: gender,
-            isSmoker: isSmoker,
-            age: data.age,
-            height: data.height,
-            weight: data.weight,
-            exercisesDaily: exercisesDaily,
+            email: userInfo.email || undefined,
+            gender: gender || undefined,
+            isSmoker: isSmoker !== undefined ? isSmoker : undefined,
+            age: data.age || undefined,
+            height: data.height || undefined,
+            weight: data.weight || undefined,
+            exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
           });
           
           console.log("Update response:", response);
@@ -195,21 +219,26 @@ const Patient = ({ userInfo }: PatientProps) => {
         }
       } else {
         // Create new patient record
-        response = await client.models.Patient.create({
+        const createData = {
           userId: userInfo.userId,
           firstName: data.firstName,
           lastName: data.lastName,
-          email: userInfo.email || "",
-          gender: gender,
-          isSmoker: isSmoker,
-          age: data.age,
-          height: data.height,
-          weight: data.weight,
-          exercisesDaily: exercisesDaily,
-        });
+          email: userInfo.email || undefined,
+          gender: gender || undefined,
+          isSmoker: isSmoker !== undefined ? isSmoker : undefined,
+          age: data.age || undefined,
+          height: data.height || undefined,
+          weight: data.weight || undefined,
+          exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
+        };
+        
+        console.log("=== CREATE DEBUG INFO ===");
+        console.log("Creating new patient with data:", createData);
+        
+        response = await client.models.Patient.create(createData);
       }
       
-      if (response.data) {
+      if (response && response.data) {
         // Set the patient data and show success message
         setExistingPatient(response.data);
         
@@ -232,10 +261,19 @@ const Patient = ({ userInfo }: PatientProps) => {
         throw new Error(isEditing ? 'Failed to update patient record' : 'Failed to create patient record');
       }
     } catch (error) {
-      console.error('Error creating patient:', error);
+      console.error('Error creating/updating patient:', error);
+      
+      // More detailed error message
+      let errorMessage = 'Failed to save patient information. ';
+      if (error instanceof Error) {
+        errorMessage += `Error: ${error.message}`;
+      } else {
+        errorMessage += 'Please try again.';
+      }
+      
       setSubmitMessage({
         type: 'error',
-        text: 'Failed to add patient. Please try again.'
+        text: errorMessage
       });
     } finally {
       setIsSubmitting(false);
@@ -509,7 +547,6 @@ const Patient = ({ userInfo }: PatientProps) => {
                 error={!!errors.age}
                 margin="normal"
                 fullWidth
-                required
                 inputProps={{ min: 1, max: 150 }}
               />
               {errors.age && (
@@ -526,7 +563,6 @@ const Patient = ({ userInfo }: PatientProps) => {
                 error={!!errors.height}
                 margin="normal"
                 fullWidth
-                required
                 inputProps={{ min: 0, step: 0.1 }}
                 helperText="centimeters"
               />
@@ -544,7 +580,6 @@ const Patient = ({ userInfo }: PatientProps) => {
                 error={!!errors.weight}
                 margin="normal"
                 fullWidth
-                required
                 inputProps={{ min: 0, step: 0.1 }}
                 helperText="kilograms"
               />
@@ -655,6 +690,12 @@ const Patient = ({ userInfo }: PatientProps) => {
             variant="contained" 
             disabled={isSubmitting}
             sx={{ minWidth: 140 }}
+            onClick={() => {
+              console.log("=== BUTTON CLICKED ===");
+              console.log("Button clicked, form should submit");
+              console.log("isSubmitting:", isSubmitting);
+              console.log("isEditing:", isEditing);
+            }}
           >
             {isSubmitting 
               ? (isEditing ? 'Updating...' : 'Submitting...') 
