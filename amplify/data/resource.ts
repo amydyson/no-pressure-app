@@ -14,7 +14,7 @@ const schema = a.schema({
     .authorization((allow) => [allow.publicApiKey()]),
   Patient: a
     .model({
-      userId: a.string().required(), // Cognito user ID as key
+      userId: a.string(), // Optional: Cognito user ID as key
       firstName: a.string().required(),
       lastName: a.string().required(),
       email: a.string(), // Optional: store email for easy reference

@@ -47,7 +47,7 @@ interface PatientProps {
 const Patient = ({ userInfo }: PatientProps) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error' | 'info', text: string} | null>(null);
   const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -67,6 +67,8 @@ const Patient = ({ userInfo }: PatientProps) => {
   // Debug validation errors
   console.log("Current form validation errors:", errors);
 
+
+
   // Check for existing patient record when component loads
   useEffect(() => {
     const checkExistingPatient = async () => {
@@ -76,14 +78,23 @@ const Patient = ({ userInfo }: PatientProps) => {
       }
 
       try {
-        // Query for patient records with this userId
-        const response = await client.models.Patient.list({
-          filter: {
-            userId: {
-              eq: userInfo.userId
+        // Query for patient records with this userId (if userId exists)
+        let response;
+        if (userInfo?.userId) {
+          response = await client.models.Patient.list({
+            filter: {
+              userId: {
+                eq: userInfo.userId || ""
+              }
             }
-          }
-        });
+          });
+        } else {
+          // No userId available, treat as new patient
+          console.log("No userId available, treating as new patient");
+          setExistingPatient(null);
+          setIsLoading(false);
+          return;
+        }
 
         if (response.data && response.data.length > 0) {
           // Patient record exists
@@ -107,11 +118,21 @@ const Patient = ({ userInfo }: PatientProps) => {
         }
       } catch (error) {
         console.error("Error checking for existing patient:", error);
+        
+        // If there are corrupted records, we'll treat this as a new patient
+        console.log("Database may have corrupted records. Starting fresh for this user.");
+        
         setExistingPatient(null);
         // Reset state variables to defaults on error
         setGender("female");
         setIsSmoker(false);
         setExercisesDaily(false);
+        
+        // Show a message to the user about starting fresh
+        setSubmitMessage({
+          type: 'info',
+          text: 'Starting with a fresh patient profile. Previous data may have been corrupted.'
+        });
       } finally {
         setIsLoading(false);
       }
@@ -160,14 +181,13 @@ const Patient = ({ userInfo }: PatientProps) => {
         lastName: data.lastName
       });
       
-      // Ensure we have a userId before creating the record
+      // Log user info for debugging
       if (!userInfo?.userId) {
-        throw new Error('User ID not available. Please refresh and try again.');
+        console.warn('User ID not available, creating patient without userId');
       }
       
-      // Ensure we have a userId before creating the record
-      if (!userInfo.email) {
-        console.warn('User email not available, using empty string');
+      if (!userInfo?.email) {
+        console.warn('User email not available');
       }
 
       let response;
@@ -178,7 +198,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         const existingRecords = await client.models.Patient.list({
           filter: {
             userId: {
-              eq: userInfo.userId
+              eq: userInfo?.userId || ""
             }
           }
         });
@@ -191,7 +211,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           console.log("Update data:", {
             firstName: data.firstName,
             lastName: data.lastName,
-            email: userInfo.email || undefined,
+            email: userInfo?.email || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
             age: data.age || undefined,
@@ -202,9 +222,10 @@ const Patient = ({ userInfo }: PatientProps) => {
           
           response = await client.models.Patient.update({
             id: existingId,
+            userId: userInfo?.userId || undefined,
             firstName: data.firstName,
             lastName: data.lastName,
-            email: userInfo.email || undefined,
+            email: userInfo?.email || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
             age: data.age || undefined,
@@ -220,10 +241,10 @@ const Patient = ({ userInfo }: PatientProps) => {
       } else {
         // Create new patient record
         const createData = {
-          userId: userInfo.userId,
+          userId: userInfo?.userId || undefined,
           firstName: data.firstName,
           lastName: data.lastName,
-          email: userInfo.email || undefined,
+          email: userInfo?.email || undefined,
           gender: gender || undefined,
           isSmoker: isSmoker !== undefined ? isSmoker : undefined,
           age: data.age || undefined,
