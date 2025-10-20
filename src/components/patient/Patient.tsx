@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper } from "@mui/material";
+import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper, FormControl, FormLabel, ToggleButton, ToggleButtonGroup, Switch, FormControlLabel } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
@@ -16,6 +16,18 @@ const schema = z.object({
     .string()
     .min(2, { message: "Must be at least 2 characters" })
     .max(100, { message: "Must not exceed 100 characters" }),
+  gender: z.string().min(1, { message: "Gender is required" }),
+  age: z
+    .number({ invalid_type_error: "Age is required and must be a number" })
+    .int({ message: "Age must be a whole number" })
+    .min(1, { message: "Age must be at least 1" })
+    .max(150, { message: "Age must be less than 150" }),
+  height: z
+    .number({ invalid_type_error: "Height is required and must be a number" })
+    .positive({ message: "Height must be positive" }),
+  weight: z
+    .number({ invalid_type_error: "Weight is required and must be a number" })
+    .positive({ message: "Weight must be positive" }),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -37,6 +49,9 @@ const Patient = ({ userInfo }: PatientProps) => {
   const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [gender, setGender] = useState<string>("female"); // Default to female
+  const [isSmoker, setIsSmoker] = useState<boolean>(false); // Default to non-smoker
+  const [exercisesDaily, setExercisesDaily] = useState<boolean>(false); // Default to no daily exercise
   
   const {
     register,
@@ -68,6 +83,10 @@ const Patient = ({ userInfo }: PatientProps) => {
         if (response.data && response.data.length > 0) {
           // Patient record exists
           setExistingPatient(response.data[0]); // Get the first record
+          // Set all state variables from existing data
+          setGender(response.data[0].gender || "female");
+          setIsSmoker(response.data[0].isSmoker || false);
+          setExercisesDaily(response.data[0].exercisesDaily || false);
           console.log("Existing patient found:", response.data[0]);
         } else {
           // No patient record found
@@ -90,6 +109,14 @@ const Patient = ({ userInfo }: PatientProps) => {
     setSubmitMessage(null);
     
     try {
+      console.log("=== FORM SUBMISSION DEBUG ===");
+      console.log("Is editing:", isEditing);
+      console.log("Form data:", data);
+      console.log("Current state values:", {
+        gender,
+        isSmoker,
+        exercisesDaily
+      });
       console.log("=== USER ID DEBUG INFO ===");
       console.log("Current userInfo:", userInfo);
       console.log("UserID:", userInfo?.userId);
@@ -134,12 +161,35 @@ const Patient = ({ userInfo }: PatientProps) => {
         
         if (existingRecords.data && existingRecords.data.length > 0) {
           const existingId = existingRecords.data[0].id;
+          
+          console.log("=== UPDATE DEBUG INFO ===");
+          console.log("Updating patient with ID:", existingId);
+          console.log("Update data:", {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: userInfo.email || "",
+            gender: gender,
+            isSmoker: isSmoker,
+            age: data.age,
+            height: data.height,
+            weight: data.weight,
+            exercisesDaily: exercisesDaily,
+          });
+          
           response = await client.models.Patient.update({
             id: existingId,
             firstName: data.firstName,
             lastName: data.lastName,
-            email: userInfo.email || undefined,
+            email: userInfo.email || "",
+            gender: gender,
+            isSmoker: isSmoker,
+            age: data.age,
+            height: data.height,
+            weight: data.weight,
+            exercisesDaily: exercisesDaily,
           });
+          
+          console.log("Update response:", response);
         } else {
           throw new Error('Could not find existing patient record to update');
         }
@@ -149,13 +199,27 @@ const Patient = ({ userInfo }: PatientProps) => {
           userId: userInfo.userId,
           firstName: data.firstName,
           lastName: data.lastName,
-          email: userInfo.email || undefined,
+          email: userInfo.email || "",
+          gender: gender,
+          isSmoker: isSmoker,
+          age: data.age,
+          height: data.height,
+          weight: data.weight,
+          exercisesDaily: exercisesDaily,
         });
       }
       
       if (response.data) {
         // Set the patient data and show success message
         setExistingPatient(response.data);
+        
+        // Update all state variables to match the updated data
+        if (isEditing) {
+          setGender(response.data.gender || "female");
+          setIsSmoker(response.data.isSmoker || false);
+          setExercisesDaily(response.data.exercisesDaily || false);
+        }
+        
         setSubmitMessage({
           type: 'success',
           text: isEditing 
@@ -235,7 +299,49 @@ const Patient = ({ userInfo }: PatientProps) => {
               Email:
             </Typography>
             <Typography variant="body1">
-              {existingPatient.email || userInfo?.email || 'Not provided'}
+              {existingPatient.email || userInfo?.email}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Gender:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.gender ? existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1) : 'Not specified'}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Smoker:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.isSmoker !== undefined ? (existingPatient.isSmoker ? 'Yes' : 'No') : 'Not specified'}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Age:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.age ? `${existingPatient.age} years` : 'Not provided'}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Height:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.height ? `${existingPatient.height} cm` : 'Not provided'}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Weight:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.weight ? `${existingPatient.weight} kg` : 'Not provided'}
+            </Typography>
+            
+            <Typography variant="body1" fontWeight="bold">
+              Exercises Daily:
+            </Typography>
+            <Typography variant="body1">
+              {existingPatient.exercisesDaily !== undefined ? (existingPatient.exercisesDaily ? 'Yes' : 'No') : 'Not specified'}
             </Typography>
             
             <Typography variant="body1" fontWeight="bold">
@@ -259,8 +365,15 @@ const Patient = ({ userInfo }: PatientProps) => {
               // Pre-populate the form with existing data
               reset({
                 firstName: existingPatient.firstName,
-                lastName: existingPatient.lastName
+                lastName: existingPatient.lastName,
+                age: existingPatient.age || 25,
+                height: existingPatient.height || 170,
+                weight: existingPatient.weight || 70
               });
+              // Set all state variables
+              setGender(existingPatient.gender || "female");
+              setIsSmoker(existingPatient.isSmoker || false);
+              setExercisesDaily(existingPatient.exercisesDaily || false);
             }}
           >
             Edit Information
@@ -311,6 +424,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               error={!!errors.firstName}
               margin="normal"
               fullWidth
+              required
             />
             {errors.firstName && (
               <FormHelperText sx={{ color: "error.main" }}>
@@ -325,6 +439,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               error={!!errors.lastName}
               margin="normal"
               fullWidth
+              required
             />
             {errors.lastName && (
               <FormHelperText sx={{ color: "error.main" }}>
@@ -332,6 +447,166 @@ const Patient = ({ userInfo }: PatientProps) => {
               </FormHelperText>
             )}
           </Box>
+        </Box>
+        
+        {/* Gender Selection */}
+        <Box sx={{ 
+          mt: 2, 
+          p: 2, 
+          bgcolor: "white", 
+          borderRadius: 2, 
+          boxShadow: 3, 
+          width: "100%", 
+          maxWidth: 600, 
+          m: "16px auto 0 auto" 
+        }}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend" sx={{ mb: 2 }}>Gender</FormLabel>
+            <ToggleButtonGroup
+              color="primary"
+              value={gender}
+              exclusive
+              onChange={(_, newGender) => {
+                if (newGender !== null) {
+                  setGender(newGender);
+                }
+              }}
+              aria-label="gender selection"
+              sx={{ display: 'flex', gap: 1 }}
+            >
+              <ToggleButton value="female" aria-label="female">
+                Female
+              </ToggleButton>
+              <ToggleButton value="male" aria-label="male">
+                Male
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </FormControl>
+        </Box>
+        
+        {/* Age, Height, Weight Fields */}
+        <Box sx={{
+          mt: 2,
+          p: 2,
+          bgcolor: "white",
+          borderRadius: 2,
+          boxShadow: 3,
+          width: "100%",
+          maxWidth: 600,
+          m: "16px auto 0 auto"
+        }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Health Information</Typography>
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2
+          }}>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label="Age (years)"
+                type="number"
+                {...register("age", { valueAsNumber: true })}
+                error={!!errors.age}
+                margin="normal"
+                fullWidth
+                required
+                inputProps={{ min: 1, max: 150 }}
+              />
+              {errors.age && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.age.message}
+                </FormHelperText>
+              )}
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label="Height (cm)"
+                type="number"
+                {...register("height", { valueAsNumber: true })}
+                error={!!errors.height}
+                margin="normal"
+                fullWidth
+                required
+                inputProps={{ min: 0, step: 0.1 }}
+                helperText="centimeters"
+              />
+              {errors.height && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.height.message}
+                </FormHelperText>
+              )}
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label="Weight (kg)"
+                type="number"
+                {...register("weight", { valueAsNumber: true })}
+                error={!!errors.weight}
+                margin="normal"
+                fullWidth
+                required
+                inputProps={{ min: 0, step: 0.1 }}
+                helperText="kilograms"
+              />
+              {errors.weight && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.weight.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+        </Box>
+        
+        {/* Smoker Status Switch */}
+        <Box sx={{ 
+          mt: 2, 
+          p: 2, 
+          bgcolor: "white", 
+          borderRadius: 2, 
+          boxShadow: 3, 
+          width: "100%", 
+          maxWidth: 600, 
+          m: "16px auto 0 auto" 
+        }}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend" sx={{ mb: 2 }}>Smoking Status</FormLabel>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isSmoker}
+                  onChange={(event) => setIsSmoker(event.target.checked)}
+                  color="primary"
+                />
+              }
+              label={isSmoker ? "Yes" : "No"}
+            />
+          </FormControl>
+        </Box>
+        
+        {/* Exercise Status Switch */}
+        <Box sx={{ 
+          mt: 2, 
+          p: 2, 
+          bgcolor: "white", 
+          borderRadius: 2, 
+          boxShadow: 3, 
+          width: "100%", 
+          maxWidth: 600, 
+          m: "16px auto 0 auto" 
+        }}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend" sx={{ mb: 2 }}>Exercises 30 minutes or more daily</FormLabel>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={exercisesDaily}
+                  onChange={(event) => setExercisesDaily(event.target.checked)}
+                  color="primary"
+                />
+              }
+              label={exercisesDaily ? "Yes" : "No"}
+            />
+          </FormControl>
         </Box>
         
         {/* Submit and Cancel Buttons */}
@@ -356,6 +631,10 @@ const Patient = ({ userInfo }: PatientProps) => {
                       });
                       if (response.data && response.data.length > 0) {
                         setExistingPatient(response.data[0]);
+                        // Restore all state variables
+                        setGender(response.data[0].gender || "female");
+                        setIsSmoker(response.data[0].isSmoker || false);
+                        setExercisesDaily(response.data[0].exercisesDaily || false);
                       }
                     } catch (error) {
                       console.error('Error restoring patient data:', error);
