@@ -6,6 +6,8 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../../amplify/data/resource";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import manImage from "../../assets/images/illustrations/man.png";
+import womanImage from "../../assets/images/illustrations/woman.png";
 
 const schema = z.object({
   firstName: z
@@ -152,6 +154,7 @@ const Patient = ({ userInfo }: PatientProps) => {
       console.log("=== FORM SUBMISSION DEBUG ===");
       console.log("Is editing:", isEditing);
       console.log("Form data:", data);
+      console.log("Age value:", data.age, "Type:", typeof data.age);
       console.log("Current state values:", {
         gender,
         isSmoker,
@@ -316,12 +319,13 @@ const Patient = ({ userInfo }: PatientProps) => {
       <Paper 
         sx={{
           p: 4,
-          maxWidth: 600,
+          maxWidth: { xs: 600, md: 1000 },
           mx: 'auto',
           textAlign: 'center',
           bgcolor: 'white',
           borderRadius: 2,
-          boxShadow: 3
+          boxShadow: 3,
+          width: '90%'
         }}
       >
         {/* Success message if just created */}
@@ -337,78 +341,157 @@ const Patient = ({ userInfo }: PatientProps) => {
           Patient Information
         </Typography>
         
-        {/* Patient Details */}
-        <Box sx={{ mt: 3, textAlign: 'left', bgcolor: 'grey.50', p: 3, borderRadius: 2 }}>
-          <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'auto 1fr' }}>
-            <Typography variant="body1" fontWeight="bold">
-              First Name:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.firstName}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Last Name:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.lastName}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Email:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.email || userInfo?.email}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Gender:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.gender ? existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1) : 'Not specified'}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Smoker:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.isSmoker !== undefined ? (existingPatient.isSmoker ? 'Yes' : 'No') : 'Not specified'}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Age:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.age ? `${existingPatient.age} years` : 'Not provided'}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Height:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.height ? `${existingPatient.height} cm` : 'Not provided'}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Weight:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.weight ? `${existingPatient.weight} kg` : 'Not provided'}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Exercises Daily:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.exercisesDaily !== undefined ? (existingPatient.exercisesDaily ? 'Yes' : 'No') : 'Not specified'}
-            </Typography>
-            
-            <Typography variant="body1" fontWeight="bold">
-              Created:
-            </Typography>
-            <Typography variant="body1">
-              {existingPatient.createdAt ? new Date(existingPatient.createdAt).toLocaleDateString() : 'Unknown'}
-            </Typography>
+        {/* Main Content - Three Section Layout */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', lg: 'row' }, 
+          gap: 4, 
+          mt: 3, 
+          alignItems: 'flex-start' 
+        }}>
+          
+          {/* Center - Gender Illustrations (Larger) */}
+          <Box sx={{ 
+            flex: { xs: 'none', lg: 1 }, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            bgcolor: 'grey.50', 
+            p: 4, 
+            borderRadius: 2,
+            minHeight: '400px',
+            justifyContent: 'center'
+          }}>
+            {/* Gender Illustrations */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mb: 3 }}>
+              <Box sx={{ textAlign: 'center' }}>
+                <img 
+                  src={manImage}
+                  alt="man illustration"
+                  style={{ 
+                    width: '150px', 
+                    height: '150px', 
+                    objectFit: 'contain',
+                    border: existingPatient.gender === 'male' ? '4px solid #1976d2' : 'none',
+                    opacity: existingPatient.gender === 'male' ? 1 : 0.6,
+                    backgroundColor: 'transparent'
+                  }}
+                />
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <img 
+                  src={womanImage}
+                  alt="woman illustration"
+                  style={{ 
+                    width: '150px', 
+                    height: '150px', 
+                    objectFit: 'contain',
+                    border: 'none',
+                    opacity: existingPatient.gender === 'female' ? 1 : 0.6,
+                    backgroundColor: 'transparent'
+                  }}
+                />
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Right - Patient Details in Two Columns */}
+          <Box sx={{ 
+            flex: { xs: 'none', lg: 2 }, 
+            bgcolor: 'grey.50', 
+            p: 4, 
+            borderRadius: 2 
+          }}>
+            {/* Two Column Grid for Information */}
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, 
+              gap: 3,
+              textAlign: 'left'
+            }}>
+              
+              {/* Left Column */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    First Name
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.firstName}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Last Name
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.lastName}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Gender
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.gender ? existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1) : 'Not specified'}
+                  </Typography>
+                </Box>
+                
+              </Box>
+              
+              {/* Right Column */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Age
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.age ? `${existingPatient.age} years` : 'Not provided'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Height
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.height ? `${existingPatient.height} cm` : 'Not provided'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Weight
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.weight ? `${existingPatient.weight} kg` : 'Not provided'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Smoker
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.isSmoker !== undefined ? (existingPatient.isSmoker ? 'Yes' : 'No') : 'Not specified'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                    Exercises Daily
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    {existingPatient.exercisesDaily !== undefined ? (existingPatient.exercisesDaily ? 'Yes' : 'No') : 'Not specified'}
+                  </Typography>
+                </Box>
+                
+              </Box>
+            </Box>
           </Box>
         </Box>
         
@@ -425,9 +508,9 @@ const Patient = ({ userInfo }: PatientProps) => {
               reset({
                 firstName: existingPatient.firstName,
                 lastName: existingPatient.lastName,
-                age: existingPatient.age || 25,
-                height: existingPatient.height || 170,
-                weight: existingPatient.weight || 70
+                age: existingPatient.age || undefined,
+                height: existingPatient.height || undefined,
+                weight: existingPatient.weight || undefined
               });
               // Set all state variables
               setGender(existingPatient.gender || "female");
@@ -461,110 +544,139 @@ const Patient = ({ userInfo }: PatientProps) => {
         {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: "flex-start",
-            gap: 2,
-            p: 2,
-            bgcolor: "white",
-            borderRadius: 2,
-            boxShadow: 3,
-            width: "100%",
-            maxWidth: 600,
-            m: "0 auto",
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-            <TextField
-              label="First Name"
-              {...register("firstName")}
-              error={!!errors.firstName}
-              margin="normal"
-              fullWidth
-              required
-            />
-            {errors.firstName && (
-              <FormHelperText sx={{ color: "error.main" }}>
-                {errors.firstName.message}
-              </FormHelperText>
-            )}
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-            <TextField
-              label="Last Name"
-              {...register("lastName")}
-              error={!!errors.lastName}
-              margin="normal"
-              fullWidth
-              required
-            />
-            {errors.lastName && (
-              <FormHelperText sx={{ color: "error.main" }}>
-                {errors.lastName.message}
-              </FormHelperText>
-            )}
-          </Box>
-        </Box>
-        
-        {/* Gender Selection */}
-        <Box sx={{ 
-          mt: 2, 
-          p: 2, 
-          bgcolor: "white", 
-          borderRadius: 2, 
-          boxShadow: 3, 
-          width: "100%", 
-          maxWidth: 600, 
-          m: "16px auto 0 auto" 
-        }}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" sx={{ mb: 2 }}>Gender</FormLabel>
-            <ToggleButtonGroup
-              color="primary"
-              value={gender}
-              exclusive
-              onChange={(_, newGender) => {
-                if (newGender !== null) {
-                  setGender(newGender);
-                }
-              }}
-              aria-label="gender selection"
-              sx={{ display: 'flex', gap: 1 }}
-            >
-              <ToggleButton value="female" aria-label="female">
-                Female
-              </ToggleButton>
-              <ToggleButton value="male" aria-label="male">
-                Male
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </FormControl>
-        </Box>
-        
-        {/* Age, Height, Weight Fields */}
+        {/* Simple Form Layout - No Sections */}
         <Box sx={{
-          mt: 2,
-          p: 2,
+          width: "90vw",
+          maxWidth: "800px",
+          m: "0 auto",
+          p: 3,
           bgcolor: "white",
           borderRadius: 2,
-          boxShadow: 3,
-          width: "100%",
-          maxWidth: 600,
-          m: "16px auto 0 auto"
+          boxShadow: 3
         }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Health Information</Typography>
+          
+          {/* Name Fields */}
           <Box sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-            gap: 2
+            gap: 2,
+            mb: 2
+          }}>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label="First Name"
+                {...register("firstName")}
+                error={!!errors.firstName}
+                margin="normal"
+                fullWidth
+                required
+              />
+              {errors.firstName && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.firstName.message}
+                </FormHelperText>
+              )}
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label="Last Name"
+                {...register("lastName")}
+                error={!!errors.lastName}
+                margin="normal"
+                fullWidth
+                required
+              />
+              {errors.lastName && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.lastName.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+
+          {/* Gender Selection */}
+          <Box sx={{ mb: 3 }}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend" sx={{ mb: 2 }}>Gender</FormLabel>
+              
+              {/* Gender Illustrations Preview */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mb: 3 }}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <img 
+                    src={manImage}
+                    alt="man illustration"
+                    style={{ 
+                      width: '80px', 
+                      height: '80px', 
+                      objectFit: 'contain',
+                      border: gender === 'male' ? '3px solid #1976d2' : 'none',
+                      opacity: gender === 'male' ? 1 : 0.6,
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      backgroundColor: 'transparent'
+                    }}
+                    onClick={() => setGender('male')}
+                  />
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <img 
+                    src={womanImage}
+                    alt="woman illustration"
+                    style={{ 
+                      width: '80px', 
+                      height: '80px', 
+                      objectFit: 'contain',
+                      border: 'none',
+                      opacity: gender === 'female' ? 1 : 0.6,
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
+                      backgroundColor: 'transparent'
+                    }}
+                    onClick={() => setGender('female')}
+                  />
+                </Box>
+              </Box>
+              
+              <ToggleButtonGroup
+                color="primary"
+                value={gender}
+                exclusive
+                onChange={(_, newGender) => {
+                  if (newGender !== null) {
+                    setGender(newGender);
+                  }
+                }}
+                aria-label="gender selection"
+                sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+              >
+                <ToggleButton value="female" aria-label="female">
+                  Female
+                </ToggleButton>
+                <ToggleButton value="male" aria-label="male">
+                  Male
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </FormControl>
+          </Box>
+
+          {/* Health Information Fields */}
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            mb: 3
           }}>
             <Box sx={{ flex: 1 }}>
               <TextField
                 label="Age (years)"
                 type="number"
-                {...register("age", { valueAsNumber: true })}
+                {...register("age", { 
+                  valueAsNumber: true,
+                  setValueAs: (value) => {
+                    console.log("Age input value:", value, "Type:", typeof value);
+                    return value === "" ? undefined : Number(value);
+                  }
+                })}
                 error={!!errors.age}
                 margin="normal"
                 fullWidth
@@ -611,62 +723,39 @@ const Patient = ({ userInfo }: PatientProps) => {
               )}
             </Box>
           </Box>
-        </Box>
-        
-        {/* Smoker Status Switch */}
-        <Box sx={{ 
-          mt: 2, 
-          p: 2, 
-          bgcolor: "white", 
-          borderRadius: 2, 
-          boxShadow: 3, 
-          width: "100%", 
-          maxWidth: 600, 
-          m: "16px auto 0 auto" 
-        }}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" sx={{ mb: 2 }}>Smoking Status</FormLabel>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isSmoker}
-                  onChange={(event) => setIsSmoker(event.target.checked)}
-                  color="primary"
-                />
-              }
-              label={isSmoker ? "Yes" : "No"}
-            />
-          </FormControl>
-        </Box>
-        
-        {/* Exercise Status Switch */}
-        <Box sx={{ 
-          mt: 2, 
-          p: 2, 
-          bgcolor: "white", 
-          borderRadius: 2, 
-          boxShadow: 3, 
-          width: "100%", 
-          maxWidth: 600, 
-          m: "16px auto 0 auto" 
-        }}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend" sx={{ mb: 2 }}>Exercises 30 minutes or more daily</FormLabel>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={exercisesDaily}
-                  onChange={(event) => setExercisesDaily(event.target.checked)}
-                  color="primary"
-                />
-              }
-              label={exercisesDaily ? "Yes" : "No"}
-            />
-          </FormControl>
+
+          {/* Lifestyle Switches */}
+          <Box sx={{ mb: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3, justifyContent: 'center' }}>
+            <FormControl component="fieldset">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isSmoker}
+                    onChange={(e) => setIsSmoker(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="I am a smoker"
+              />
+            </FormControl>
+
+            <FormControl component="fieldset">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={exercisesDaily}
+                    onChange={(e) => setExercisesDaily(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="I exercise 30+ minutes daily"
+              />
+            </FormControl>
+          </Box>
         </Box>
         
         {/* Submit and Cancel Buttons */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
           {isEditing && (
             <Button 
               variant="outlined" 
