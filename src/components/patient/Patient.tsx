@@ -319,13 +319,12 @@ const Patient = ({ userInfo }: PatientProps) => {
       <Paper 
         sx={{
           p: 4,
-          maxWidth: { xs: 600, md: 1000 },
           mx: 'auto',
           textAlign: 'center',
           bgcolor: '#d7e9f7',
           borderRadius: 2,
           boxShadow: 3,
-          width: '90%'
+          width: '100%'
         }}
       >
         {/* Success message if just created */}
@@ -341,18 +340,18 @@ const Patient = ({ userInfo }: PatientProps) => {
           Patient Information
         </Typography>
         
-        {/* Main Content - Three Section Layout */}
+        {/* Main Content - Two Section Layout */}
         <Box sx={{ 
           display: 'flex', 
-          flexDirection: { xs: 'column', lg: 'row' }, 
+          flexDirection: { xs: 'column', md: 'row' }, 
           gap: 2, 
           mt: 3, 
-          alignItems: 'flex-start' 
+          alignItems: { xs: 'center', md: 'flex-start' }
         }}>
           
-          {/* Center - Gender Illustrations (Larger) */}
+          {/* Left - Gender Illustrations */}
           <Box sx={{ 
-            flex: { xs: 'none', lg: 1 }, 
+            flex: { xs: 'none', md: 1 }, 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
@@ -395,15 +394,22 @@ const Patient = ({ userInfo }: PatientProps) => {
 
           {/* Right - Patient Details in Two Columns */}
           <Box sx={{ 
-            flex: { xs: 'none', lg: 2 }, 
-            p: 4
+            flex: { xs: 'none', md: 2 }, 
+             border: { xs: '1px solid #1975d1', md: 'none' },
+            p: 4,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: { xs: 'center', md: 'stretch' }
           }}>
             {/* Two Column Grid for Information */}
             <Box sx={{ 
               display: 'grid', 
-              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, 
+              gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr' }, 
               gap: 3,
-              textAlign: 'left'
+              textAlign: 'left',
+              maxWidth: { xs: '500px', md: 'none' },
+              width: '100%'
             }}>
               
               {/* First Row - Names Side by Side */}
