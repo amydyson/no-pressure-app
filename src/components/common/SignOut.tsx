@@ -1,18 +1,25 @@
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
 const SignOut = () => {
   const { signOut } = useAuthenticator();
 
   return (
-    <div>
-      <Box position="absolute" top="0" right="0" margin="20px">
-        <Button variant="contained" onClick={signOut}>
-          Sign Out
-        </Button>
-      </Box>
-    </div>
+    <Button 
+      onClick={signOut}
+      variant="outlined"
+      size="small"
+      sx={{ 
+        borderColor: '#FFFFFF',
+        color: '#FFFFFF',
+        '&:hover': {
+          borderColor: '#FFFFFF',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)'
+        }
+      }}
+    >
+      Sign Out
+    </Button>
   );
 };
 

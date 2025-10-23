@@ -336,7 +336,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           </Box>
         )}
         
-        <Typography variant="h4" gutterBottom color="primary.dark">
+        <Typography variant="h4" gutterBottom sx={{ color: '#2F4F4F' }}>
           Patient Information
         </Typography>
         
@@ -542,14 +542,11 @@ const Patient = ({ userInfo }: PatientProps) => {
           width: "90vw",
           maxWidth: "800px",
           m: "0 auto",
-          p: 3,
-          bgcolor: "white",
-          borderRadius: 2,
-          boxShadow: 3
+          p: 3
         }}>
           
           {/* Form Title */}
-          <Typography variant="h5" textAlign="center" mb={3}>
+          <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#2F4F4F' }}>
             {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
           </Typography>
           
