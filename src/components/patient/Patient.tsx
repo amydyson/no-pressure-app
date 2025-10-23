@@ -322,7 +322,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           maxWidth: { xs: 600, md: 1000 },
           mx: 'auto',
           textAlign: 'center',
-          bgcolor: 'white',
+          bgcolor: '#d7e9f7',
           borderRadius: 2,
           boxShadow: 3,
           width: '90%'
@@ -337,7 +337,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           </Box>
         )}
         
-        <Typography variant="h4" gutterBottom color="primary">
+        <Typography variant="h4" gutterBottom color="primary.dark">
           Patient Information
         </Typography>
         
@@ -345,7 +345,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         <Box sx={{ 
           display: 'flex', 
           flexDirection: { xs: 'column', lg: 'row' }, 
-          gap: 4, 
+          gap: 2, 
           mt: 3, 
           alignItems: 'flex-start' 
         }}>
@@ -356,38 +356,36 @@ const Patient = ({ userInfo }: PatientProps) => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            bgcolor: 'grey.50', 
             p: 4, 
-            borderRadius: 2,
             minHeight: '400px',
             justifyContent: 'center'
           }}>
             {/* Gender Illustrations */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mb: 3 }}>
-              <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0, mb: 3 }}>
+              <Box sx={{ textAlign: 'center', marginRight: '-50px' }}>
                 <img 
                   src={manImage}
                   alt="man illustration"
                   style={{ 
-                    width: '150px', 
-                    height: '150px', 
+                    width: '250px', 
+                    height: '250px', 
                     objectFit: 'contain',
-                    border: existingPatient.gender === 'male' ? '4px solid #1976d2' : 'none',
-                    opacity: existingPatient.gender === 'male' ? 1 : 0.6,
+                    border: 'none',
+                    opacity: 1,
                     backgroundColor: 'transparent'
                   }}
                 />
               </Box>
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: 'center', marginLeft: '-50px' }}>
                 <img 
                   src={womanImage}
                   alt="woman illustration"
                   style={{ 
-                    width: '150px', 
-                    height: '150px', 
+                    width: '250px', 
+                    height: '250px', 
                     objectFit: 'contain',
                     border: 'none',
-                    opacity: existingPatient.gender === 'female' ? 1 : 0.6,
+                    opacity: 1,
                     backgroundColor: 'transparent'
                   }}
                 />
@@ -398,9 +396,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           {/* Right - Patient Details in Two Columns */}
           <Box sx={{ 
             flex: { xs: 'none', lg: 2 }, 
-            bgcolor: 'grey.50', 
-            p: 4, 
-            borderRadius: 2 
+            p: 4
           }}>
             {/* Two Column Grid for Information */}
             <Box sx={{ 
@@ -410,86 +406,80 @@ const Patient = ({ userInfo }: PatientProps) => {
               textAlign: 'left'
             }}>
               
-              {/* Left Column */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    First Name
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.firstName}
-                  </Typography>
-                </Box>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Last Name
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.lastName}
-                  </Typography>
-                </Box>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Gender
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.gender ? existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1) : 'Not specified'}
-                  </Typography>
-                </Box>
-                
+              {/* First Row - Names Side by Side */}
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  First Name
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.firstName}
+                </Typography>
               </Box>
               
-              {/* Right Column */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Age
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.age ? `${existingPatient.age} years` : 'Not provided'}
-                  </Typography>
-                </Box>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Height
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.height ? `${existingPatient.height} cm` : 'Not provided'}
-                  </Typography>
-                </Box>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Weight
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.weight ? `${existingPatient.weight} kg` : 'Not provided'}
-                  </Typography>
-                </Box>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Smoker
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.isSmoker !== undefined ? (existingPatient.isSmoker ? 'Yes' : 'No') : 'Not specified'}
-                  </Typography>
-                </Box>
-                
-                <Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    Exercises Daily
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                    {existingPatient.exercisesDaily !== undefined ? (existingPatient.exercisesDaily ? 'Yes' : 'No') : 'Not specified'}
-                  </Typography>
-                </Box>
-                
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Last Name
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.lastName}
+                </Typography>
+              </Box>
+              
+              {/* Second Row */}
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Gender
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.gender ? existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1) : 'Not specified'}
+                </Typography>
+              </Box>
+              
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Age
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.age ? `${existingPatient.age} years` : 'Not provided'}
+                </Typography>
+              </Box>
+              
+              {/* Third Row */}
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Height
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.height ? `${existingPatient.height} cm` : 'Not provided'}
+                </Typography>
+              </Box>
+              
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Weight
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.weight ? `${existingPatient.weight} kg` : 'Not provided'}
+                </Typography>
+              </Box>
+              
+              {/* Fourth Row */}
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Smoker
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.isSmoker !== undefined ? (existingPatient.isSmoker ? 'Yes' : 'No') : 'Not specified'}
+                </Typography>
+              </Box>
+              
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Exercises Daily
+                </Typography>
+                <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                  {existingPatient.exercisesDaily !== undefined ? (existingPatient.exercisesDaily ? 'Yes' : 'No') : 'Not specified'}
+                </Typography>
               </Box>
             </Box>
           </Box>
@@ -540,9 +530,6 @@ const Patient = ({ userInfo }: PatientProps) => {
   // New patient form or edit form
   return (
     <>
-      <Typography variant="h5" textAlign="center" mb={3}>
-        {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
-      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Simple Form Layout - No Sections */}
         <Box sx={{
@@ -554,6 +541,11 @@ const Patient = ({ userInfo }: PatientProps) => {
           borderRadius: 2,
           boxShadow: 3
         }}>
+          
+          {/* Form Title */}
+          <Typography variant="h5" textAlign="center" mb={3}>
+            {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
+          </Typography>
           
           {/* Name Fields */}
           <Box sx={{
@@ -594,78 +586,41 @@ const Patient = ({ userInfo }: PatientProps) => {
             </Box>
           </Box>
 
-          {/* Gender Selection */}
-          <Box sx={{ mb: 3 }}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend" sx={{ mb: 2 }}>Gender</FormLabel>
-              
-              {/* Gender Illustrations Preview */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mb: 3 }}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <img 
-                    src={manImage}
-                    alt="man illustration"
-                    style={{ 
-                      width: '80px', 
-                      height: '80px', 
-                      objectFit: 'contain',
-                      border: gender === 'male' ? '3px solid #1976d2' : 'none',
-                      opacity: gender === 'male' ? 1 : 0.6,
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer',
-                      backgroundColor: 'transparent'
-                    }}
-                    onClick={() => setGender('male')}
-                  />
-                </Box>
-                <Box sx={{ textAlign: 'center' }}>
-                  <img 
-                    src={womanImage}
-                    alt="woman illustration"
-                    style={{ 
-                      width: '80px', 
-                      height: '80px', 
-                      objectFit: 'contain',
-                      border: 'none',
-                      opacity: gender === 'female' ? 1 : 0.6,
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer',
-                      backgroundColor: 'transparent'
-                    }}
-                    onClick={() => setGender('female')}
-                  />
-                </Box>
-              </Box>
-              
-              <ToggleButtonGroup
-                color="primary"
-                value={gender}
-                exclusive
-                onChange={(_, newGender) => {
-                  if (newGender !== null) {
-                    setGender(newGender);
-                  }
-                }}
-                aria-label="gender selection"
-                sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
-              >
-                <ToggleButton value="female" aria-label="female">
-                  Female
-                </ToggleButton>
-                <ToggleButton value="male" aria-label="male">
-                  Male
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </FormControl>
-          </Box>
-
-          {/* Health Information Fields */}
+          {/* Gender and Age Row */}
           <Box sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             gap: 2,
             mb: 3
           }}>
+            {/* Gender Selection */}
+            <Box sx={{ flex: 1 }}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend" sx={{ mb: 2 }}>Gender</FormLabel>
+                
+                <ToggleButtonGroup
+                  color="primary"
+                  value={gender}
+                  exclusive
+                  onChange={(_, newGender) => {
+                    if (newGender !== null) {
+                      setGender(newGender);
+                    }
+                  }}
+                  aria-label="gender selection"
+                  sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                >
+                  <ToggleButton value="female" aria-label="female">
+                    Female
+                  </ToggleButton>
+                  <ToggleButton value="male" aria-label="male">
+                    Male
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </FormControl>
+            </Box>
+            
+            {/* Age Field */}
             <Box sx={{ flex: 1 }}>
               <TextField
                 label="Age (years)"
@@ -688,6 +643,15 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
+          </Box>
+
+          {/* Height and Weight Row */}
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            mb: 3
+          }}>
             <Box sx={{ flex: 1 }}>
               <TextField
                 label="Height (cm)"
