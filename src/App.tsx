@@ -3,7 +3,7 @@ import Home from "./components/common/Home";
 import SignOut from "./components/common/SignOut";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
-import logo from "./assets/images/illustrations/logo.png";
+import logo from "./assets/images/illustrations/logo-pumpkin.png";
 
 function App() {
   return (
