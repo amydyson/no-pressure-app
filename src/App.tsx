@@ -30,7 +30,7 @@ function NavigationBar() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: { xs: 'center', sm: 'flex-start' },
-          gap: 2,
+          gap: 0.5, // reduced gap for tighter alignment
           cursor: 'pointer',
           '&:hover': {
             opacity: 0.8
@@ -43,12 +43,38 @@ function NavigationBar() {
             alt="No Pressure Logo" 
             style={{ 
               height: '48px', 
-              width: 'auto'
+              width: 'auto',
+              marginRight: 2 // extra tightness
             }} 
           />
-          <Typography variant="h6" component="div">
-            No Pressure
-          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            lineHeight: 1,
+            ml: 0 // remove any default margin
+          }}>
+            <Typography variant="body2" component="div" sx={{ 
+              color: '#F4c430',
+              fontWeight: 'bold',
+              fontSize: '0.85rem',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              mb: '-2px'
+            }}>
+              NO
+            </Typography>
+            <Typography variant="body2" component="div" sx={{ 
+              color: '#F4c430',
+              fontWeight: 'bold',
+              fontSize: '0.85rem',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              mt: '-2px'
+            }}>
+              PRESSURE
+            </Typography>
+          </Box>
         </Box>
         <Box>
           <SignOut />

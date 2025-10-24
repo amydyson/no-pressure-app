@@ -166,18 +166,10 @@ const Patient = ({ userInfo }: PatientProps) => {
       console.log("Form data:", data);
       console.log("Date of birth value:", data.dateOfBirth, "Type:", typeof data.dateOfBirth);
       
-      // Ensure date is properly formatted as YYYY-MM-DD string to avoid timezone issues
-      let processedDateOfBirth = data.dateOfBirth;
+      // Date of birth is always a string from the form (YYYY-MM-DD), no conversion needed
+      const processedDateOfBirth = data.dateOfBirth;
       if (processedDateOfBirth) {
-        // HTML date inputs return dates in YYYY-MM-DD format
-        // We keep this format to avoid timezone conversion issues
-        if (processedDateOfBirth instanceof Date) {
-          // If somehow it's a Date object, convert safely
-          const year = processedDateOfBirth.getFullYear();
-          const month = String(processedDateOfBirth.getMonth() + 1).padStart(2, '0');
-          const day = String(processedDateOfBirth.getDate()).padStart(2, '0');
-          processedDateOfBirth = `${year}-${month}-${day}`;
-        }
+        // Already in correct format
         console.log("Processed date of birth:", processedDateOfBirth);
       }
       
