@@ -696,9 +696,10 @@ const Patient = ({ userInfo }: PatientProps) => {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             gap: 2,
-            mb: 2
+            mb: 2,
+            alignItems: { xs: 'stretch', md: 'center' },
           }}>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: { xs: 1, md: 2 } }}>
               <TextField
                 label={language === 'pt' ? 'Nome' : 'First Name'}
                 {...register("firstName")}
@@ -721,7 +722,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: { xs: 1, md: 2 } }}>
               <TextField
                 label={language === 'pt' ? 'Sobrenome' : 'Last Name'}
                 {...register("lastName")}
@@ -744,77 +745,85 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
+            <Box sx={{ flex: 1, minWidth: 180, mt: { xs: 0, md: '12px' } }}>
+              <FormControl fullWidth>
+                <InputLabel sx={{ color: "#BE550F" }}>
+                  {language === 'pt' ? 'Avatar' : 'Avatar'}
+                </InputLabel>
+                <Select
+                  {...register("avatar")}
+                  value={watch("avatar") || ""}
+                  label={language === 'pt' ? 'Avatar' : 'Avatar'}
+                  sx={{
+                    minWidth: 0,
+                    top: '-2px',
+                    width: 'fit-content',
+                    height: 56,
+                    '& .MuiSelect-select': {
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      minWidth: 0,
+                      width: 'fit-content',
+                      px: 1,
+                      py: 0.5,
+                      height: 32,
+                    },
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>{language === 'pt' ? 'Escolha seu avatar' : 'Choose your avatar'}</em>
+                  </MenuItem>
+                  <MenuItem value="book">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={bookIcon} alt="Book" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="cat">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="dog">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={dogIcon} alt="Dog" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="flower">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={flowerIcon} alt="Flower" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="guitar">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={guitarIcon} alt="Guitar" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="headphones">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={headphonesIcon} alt="Headphones" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="moon">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={moonIcon} alt="Moon" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="sun">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={sunIcon} alt="Sun" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="umbrella">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={umbrellaIcon} alt="Umbrella" style={{ width: 24, height: 24 }} />
+                    </Box>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
           </Box>
 
-          {/* Avatar Selection */}
-          <Box sx={{ mb: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel sx={{ color: "#BE550F", fontWeight: "bold" }}>
-                {language === 'pt' ? 'Avatar' : 'Avatar'}
-              </InputLabel>
-              <Select
-                {...register("avatar")}
-                value={watch("avatar") || ""}
-                label={language === 'pt' ? 'Avatar' : 'Avatar'}
-                sx={{
-                  "& .MuiSelect-select": {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  },
-                }}
-              >
-                <MenuItem value="">
-                  <em>{language === 'pt' ? 'Escolha seu avatar' : 'Choose your avatar'}</em>
-                </MenuItem>
-                <MenuItem value="book">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={bookIcon} alt="Book" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="cat">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="dog">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={dogIcon} alt="Dog" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="flower">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={flowerIcon} alt="Flower" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="guitar">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={guitarIcon} alt="Guitar" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="headphones">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={headphonesIcon} alt="Headphones" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="moon">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={moonIcon} alt="Moon" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="sun">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={sunIcon} alt="Sun" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-                <MenuItem value="umbrella">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={umbrellaIcon} alt="Umbrella" style={{ width: 24, height: 24 }} />
-                  </Box>
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
 
           {/* Gender and Age Row */}
           <Box sx={{
