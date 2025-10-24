@@ -168,48 +168,18 @@ const Patient = ({ userInfo }: PatientProps) => {
       console.log("Is editing:", isEditing);
       console.log("Form data:", data);
       console.log("Date of birth value:", data.dateOfBirth, "Type:", typeof data.dateOfBirth);
-      
       // Date of birth is always a string from the form (YYYY-MM-DD), no conversion needed
       const processedDateOfBirth = data.dateOfBirth;
       if (processedDateOfBirth) {
         // Already in correct format
         console.log("Processed date of birth:", processedDateOfBirth);
       }
-      
-      console.log("Current state values:", {
-        gender,
-        isSmoker,
-        exercisesDaily
-      });
-      console.log("=== USER ID DEBUG INFO ===");
-      console.log("Current userInfo:", userInfo);
-      console.log("UserID:", userInfo?.userId);
-      console.log("Email:", userInfo?.email);
-      console.log("Groups:", userInfo?.groups);
-      
-      // Let's also fetch fresh session info to compare
       const { fetchAuthSession } = await import("aws-amplify/auth");
       const freshSession = await fetchAuthSession();
       const freshPayload = freshSession.tokens?.idToken?.payload;
-      
-      console.log("=== FRESH SESSION COMPARISON ===");
-      console.log("Fresh sub:", freshPayload?.sub);
-      console.log("Fresh email:", freshPayload?.email);
-      console.log("Are they the same?", userInfo?.userId === freshPayload?.sub);
-      console.log("================================");
-      
-      console.log("Submitting patient data for user:", {
-        userId: userInfo?.userId,
-        email: userInfo?.email,
-        firstName: data.firstName,
-        lastName: data.lastName
-      });
-      
-      // Log user info for debugging
       if (!userInfo?.userId) {
         console.warn('User ID not available, creating patient without userId');
       }
-      
       if (!userInfo?.email) {
         console.warn('User email not available');
       }
@@ -698,7 +668,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             mb: 2,
             alignItems: { xs: 'stretch', md: 'center' },
           }}>
-            <Box sx={{ flex: { xs: 1, md: 2 } }}>
+            <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
               <TextField
                 label={language === 'pt' ? 'Nome' : 'First Name'}
                 {...register("firstName")}
@@ -721,7 +691,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
-            <Box sx={{ flex: { xs: 1, md: 2 } }}>
+            <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
               <TextField
                 label={language === 'pt' ? 'Sobrenome' : 'Last Name'}
                 {...register("lastName")}
@@ -749,7 +719,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               minWidth: 180,
               mt: { xs: 0, md: '12px' },
               display: 'flex',
-              justifyContent: 'flex-end'
+              justifyContent: { xs: 'flex-start', md: 'flex-end' }
             }}>
               <FormControl>
                 <InputLabel sx={{ color: "#BE550F" }}>
