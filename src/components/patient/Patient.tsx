@@ -735,7 +735,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 1,
-                      minWidth: 0,
+                      minWidth: 90,
                       width: 'fit-content',
                       px: 1,
                       py: 0.5,
@@ -748,47 +748,47 @@ const Patient = ({ userInfo }: PatientProps) => {
                   </MenuItem>
                   <MenuItem value="book">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={bookIcon} alt="Book" style={{ width: 24, height: 24 }} />
+                      <img src={bookIcon} alt="Book" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="cat">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 24, height: 24 }} />
+                      <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="dog">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={dogIcon} alt="Dog" style={{ width: 24, height: 24 }} />
+                      <img src={dogIcon} alt="Dog" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="flower">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={flowerIcon} alt="Flower" style={{ width: 24, height: 24 }} />
+                      <img src={flowerIcon} alt="Flower" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="guitar">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={guitarIcon} alt="Guitar" style={{ width: 24, height: 24 }} />
+                      <img src={guitarIcon} alt="Guitar" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="headphones">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={headphonesIcon} alt="Headphones" style={{ width: 24, height: 24 }} />
+                      <img src={headphonesIcon} alt="Headphones" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="moon">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={moonIcon} alt="Moon" style={{ width: 24, height: 24 }} />
+                      <img src={moonIcon} alt="Moon" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="sun">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={sunIcon} alt="Sun" style={{ width: 24, height: 24 }} />
+                      <img src={sunIcon} alt="Sun" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="umbrella">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={umbrellaIcon} alt="Umbrella" style={{ width: 24, height: 24 }} />
+                      <img src={umbrellaIcon} alt="Umbrella" style={{ width: 32, height: 32 }} />
                     </Box>
                   </MenuItem>
                 </Select>
