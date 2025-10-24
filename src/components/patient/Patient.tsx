@@ -174,9 +174,6 @@ const Patient = ({ userInfo }: PatientProps) => {
         // Already in correct format
         console.log("Processed date of birth:", processedDateOfBirth);
       }
-      const { fetchAuthSession } = await import("aws-amplify/auth");
-      const freshSession = await fetchAuthSession();
-      const freshPayload = freshSession.tokens?.idToken?.payload;
       if (!userInfo?.userId) {
         console.warn('User ID not available, creating patient without userId');
       }
