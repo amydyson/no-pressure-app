@@ -318,12 +318,12 @@ const Patient = ({ userInfo }: PatientProps) => {
     return (
       <Paper 
         sx={{
-          p: 4,
+          px: 4,
+          py: 2,
           mx: 'auto',
           textAlign: 'center',
           bgcolor: '#d7e9f7',
           borderRadius: 2,
-          boxShadow: 3,
           width: '100%'
         }}
       >
@@ -492,7 +492,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         </Box>
         
         {/* Action Buttons */}
-        <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ mt: 1, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Button 
             variant="outlined" 
             sx={{ 
@@ -550,7 +550,12 @@ const Patient = ({ userInfo }: PatientProps) => {
 
   // New patient form or edit form
   return (
-    <>
+    <Box sx={{ 
+      bgcolor: '#d7e9f7', 
+      minHeight: '100vh',
+      width: '100%',
+      pb: 4
+    }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Simple Form Layout - No Sections */}
         <Box sx={{
@@ -848,7 +853,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           </Box>
         )}
       </form>
-    </>
+    </Box>
   );
 };
 

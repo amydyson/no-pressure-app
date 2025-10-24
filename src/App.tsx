@@ -10,7 +10,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <CssBaseline />
+        <Box sx={{ 
+          bgcolor: '#d7e9f7', 
+          minHeight: '100vh',
+          width: '100%',
+          position: 'relative'
+        }}>
+          <CssBaseline />
       <AppBar position="sticky" sx={{ 
         mb: 0,
         bgcolor: '#2F4F4F',
@@ -46,6 +52,7 @@ function App() {
         </Toolbar>
       </AppBar>
       <Home />
+        </Box>
     </BrowserRouter>
     </ThemeProvider>
   );

@@ -76,7 +76,7 @@ function Home() {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      bgcolor="rgb(227, 242, 253)"
+      bgcolor="#d7e9f7"
       width="100vw"
     >
       <Routes>
