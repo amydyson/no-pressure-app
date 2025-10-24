@@ -487,25 +487,21 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.dateOfBirth ? (() => {
-                    // Accepts YYYY-MM-DD, DD/MM/YYYY, or MM/DD/YYYY
+                    // Accepts YYYY-MM-DD or DD/MM/YYYY only
                     let year, month, day;
                     const input = existingPatient.dateOfBirth;
                     if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
                       // YYYY-MM-DD
                       [year, month, day] = input.split('-');
                     } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(input)) {
-                      // DD/MM/YYYY or MM/DD/YYYY
-                      const parts = input.split('/');
-                      if (language === 'pt') {
-                        // DD/MM/YYYY
-                        [day, month, year] = parts;
-                      } else {
-                        // MM/DD/YYYY
-                        [month, day, year] = parts;
-                      }
+                      // DD/MM/YYYY
+                      [day, month, year] = input.split('/');
                     } else {
                       return input;
                     }
+                    // Remove leading zeros
+                    day = String(Number(day));
+                    month = String(Number(month));
                     // Month abbreviations
                     const monthAbbrEN = [
                       '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -837,8 +833,9 @@ const Patient = ({ userInfo }: PatientProps) => {
             <Box sx={{ flex: 1 }}>
               <TextField
                 label={language === 'pt' ? 'Data de Nascimento' : 'Date of Birth'}
-                placeholder={language === 'pt' ? 'dd/mm/aaaa' : 'mm/dd/yyyy'}
+                placeholder={language === 'pt' ? 'DD/MM/AAAA' : 'DD/MM/YYYY'}
                 type="text"
+                inputProps={{ inputMode: 'numeric', pattern: '[0-3][0-9]/[0-1][0-9]/[1-2][0-9]{3}' }}
                 {...register("dateOfBirth")}
                 error={!!errors.dateOfBirth}
                 margin="normal"
