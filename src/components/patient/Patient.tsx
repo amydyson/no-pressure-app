@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper, FormControl, FormLabel, ToggleButton, ToggleButtonGroup, Switch, FormControlLabel } from "@mui/material";
+import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper, FormControl, FormLabel, ToggleButton, ToggleButtonGroup, Switch, FormControlLabel, MenuItem, Select, InputLabel } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
@@ -8,6 +8,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import manImage from "../../assets/images/illustrations/man.png";
 import womanImage from "../../assets/images/illustrations/woman.png";
+import bookIcon from "../../assets/images/avatar-icons/book.png";
+import catIcon from "../../assets/images/avatar-icons/cat.png";
+import dogIcon from "../../assets/images/avatar-icons/dog.png";
+import flowerIcon from "../../assets/images/avatar-icons/flower.png";
 
 const schema = z.object({
   firstName: z
@@ -18,6 +22,9 @@ const schema = z.object({
     .string()
     .min(2, { message: "Must be at least 2 characters" })
     .max(100, { message: "Must not exceed 100 characters" }),
+  avatar: z
+    .string()
+    .optional(),
   age: z
     .number({ invalid_type_error: "Age must be a number" })
     .int({ message: "Age must be a whole number" })
@@ -215,6 +222,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             firstName: data.firstName,
             lastName: data.lastName,
             email: userInfo?.email || undefined,
+            avatar: data.avatar || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
             age: data.age || undefined,
@@ -229,6 +237,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             firstName: data.firstName,
             lastName: data.lastName,
             email: userInfo?.email || undefined,
+            avatar: data.avatar || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
             age: data.age || undefined,
@@ -248,6 +257,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           firstName: data.firstName,
           lastName: data.lastName,
           email: userInfo?.email || undefined,
+          avatar: data.avatar || undefined,
           gender: gender || undefined,
           isSmoker: isSmoker !== undefined ? isSmoker : undefined,
           age: data.age || undefined,
@@ -345,7 +355,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           display: 'flex', 
           flexDirection: { xs: 'column', md: 'row' }, 
           gap: 2, 
-          mt: 3, 
+          mt: 4,
           alignItems: { xs: 'center', md: 'flex-start' }
         }}>
           
@@ -355,12 +365,13 @@ const Patient = ({ userInfo }: PatientProps) => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            p: 4, 
-            minHeight: '400px',
+            px: 4,
+            py: 2,
+            minHeight: '350px',
             justifyContent: 'center'
           }}>
             {/* Gender Illustrations */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0, mb: 1 }}>
               <Box sx={{ textAlign: 'center', marginRight: '-50px' }}>
                 <img 
                   src={manImage}
@@ -396,7 +407,8 @@ const Patient = ({ userInfo }: PatientProps) => {
           <Box sx={{ 
             flex: { xs: 'none', md: 2 }, 
              border: { xs: '1px solid #BE550F', md: 'none' },
-            p: 4,
+            px: 4,
+            py: 2,
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
@@ -513,6 +525,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               reset({
                 firstName: existingPatient.firstName,
                 lastName: existingPatient.lastName,
+                avatar: existingPatient.avatar || undefined,
                 age: existingPatient.age || undefined,
                 height: existingPatient.height || undefined,
                 weight: existingPatient.weight || undefined
@@ -623,6 +636,55 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
+          </Box>
+
+          {/* Avatar Selection */}
+          <Box sx={{ mb: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel sx={{ color: "#BE550F", fontWeight: "bold" }}>
+                Avatar
+              </InputLabel>
+              <Select
+                {...register("avatar")}
+                defaultValue=""
+                label="Avatar"
+                sx={{
+                  "& .MuiSelect-select": {
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em>Choose your avatar</em>
+                </MenuItem>
+                <MenuItem value="book">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={bookIcon} alt="Book" style={{ width: 24, height: 24 }} />
+                    Book
+                  </Box>
+                </MenuItem>
+                <MenuItem value="cat">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={catIcon} alt="Cat" style={{ width: 24, height: 24 }} />
+                    Cat
+                  </Box>
+                </MenuItem>
+                <MenuItem value="dog">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={dogIcon} alt="Dog" style={{ width: 24, height: 24 }} />
+                    Dog
+                  </Box>
+                </MenuItem>
+                <MenuItem value="flower">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={flowerIcon} alt="Flower" style={{ width: 24, height: 24 }} />
+                    Flower
+                  </Box>
+                </MenuItem>
+              </Select>
+            </FormControl>
           </Box>
 
           {/* Gender and Age Row */}

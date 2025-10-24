@@ -18,6 +18,7 @@ const schema = a.schema({
       firstName: a.string().required(),
       lastName: a.string().required(),
       email: a.string(), // Optional: store email for easy reference
+      avatar: a.string(), // Optional: avatar selection (book, cat, dog, flower)
       gender: a.string(), // Optional: male or female
       isSmoker: a.boolean(), // Optional: smoker status
       age: a.integer(), // Optional: patient age
