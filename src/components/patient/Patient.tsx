@@ -751,7 +751,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               display: 'flex',
               justifyContent: 'flex-end'
             }}>
-              <FormControl fullWidth>
+              <FormControl>
                 <InputLabel sx={{ color: "#BE550F" }}>
                   {language === 'pt' ? 'Avatar' : 'Avatar'}
                 </InputLabel>
