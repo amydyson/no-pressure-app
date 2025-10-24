@@ -521,16 +521,42 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.dateOfBirth ? (() => {
-                    // Handle date formatting safely to avoid timezone issues
-                    if (existingPatient.dateOfBirth.includes('-')) {
-                      // If it's in YYYY-MM-DD format, convert to MM/DD/YYYY
-                      const [year, month, day] = existingPatient.dateOfBirth.split('-');
-                      return `${month}/${day}/${year}`;
+                    // Accepts YYYY-MM-DD, DD/MM/YYYY, or MM/DD/YYYY
+                    let year, month, day;
+                    const input = existingPatient.dateOfBirth;
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+                      // YYYY-MM-DD
+                      [year, month, day] = input.split('-');
+                    } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(input)) {
+                      // DD/MM/YYYY or MM/DD/YYYY
+                      const parts = input.split('/');
+                      if (language === 'pt') {
+                        // DD/MM/YYYY
+                        [day, month, year] = parts;
+                      } else {
+                        // MM/DD/YYYY
+                        [month, day, year] = parts;
+                      }
                     } else {
-                      // If it's already in a different format, display as is
-                      return existingPatient.dateOfBirth;
+                      return input;
                     }
-                  })() : 'Not provided'}
+                    // Month abbreviations
+                    const monthAbbrEN = [
+                      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                    ];
+                    const monthAbbrPT = [
+                      '', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+                      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+                    ];
+                    const m = parseInt(month, 10);
+                    const abbr = language === 'pt' ? monthAbbrPT : monthAbbrEN;
+                    if (!isNaN(m) && m >= 1 && m <= 12) {
+                      return `${day} ${abbr[m]} ${year}`;
+                    } else {
+                      return `${day}/${month}/${year}`;
+                    }
+                  })() : (language === 'pt' ? 'Não informado' : 'Not provided')}
                 </Typography>
               </Box>
               
@@ -830,7 +856,8 @@ const Patient = ({ userInfo }: PatientProps) => {
             <Box sx={{ flex: 1 }}>
               <TextField
                 label={language === 'pt' ? 'Data de Nascimento' : 'Date of Birth'}
-                type="date"
+                placeholder={language === 'pt' ? 'dd/mm/aaaa' : 'mm/dd/yyyy'}
+                type="text"
                 {...register("dateOfBirth")}
                 error={!!errors.dateOfBirth}
                 margin="normal"

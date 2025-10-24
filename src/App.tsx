@@ -135,6 +135,11 @@ function NavigationBar({ language, setLanguage }: { language: string, setLanguag
 
 function App() {
   const [language, setLanguage] = React.useState('pt');
+
+  React.useEffect(() => {
+    document.title = language === 'pt' ? 'Sem Pressão' : 'No Pressure';
+  }, [language]);
+
   return (
     <ThemeProvider theme={theme}>
       <LanguageContext.Provider value={{ language, setLanguage }}>
