@@ -414,7 +414,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               
               {/* First Row - Names Side by Side */}
               <Box>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 0.5, color: '#BE550F' }}>
                   First Name
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
@@ -495,6 +495,15 @@ const Patient = ({ userInfo }: PatientProps) => {
         <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Button 
             variant="outlined" 
+            sx={{ 
+              borderColor: '#BE550F',
+              color: '#BE550F',
+              '&:hover': {
+                borderColor: '#9A4409',
+                color: '#9A4409',
+                bgcolor: 'rgba(190, 85, 15, 0.04)'
+              }
+            }}
             onClick={() => {
               setIsEditing(true); // Set editing mode
               setExistingPatient(null); // Show the form
@@ -519,8 +528,14 @@ const Patient = ({ userInfo }: PatientProps) => {
           
           <Button 
             variant="contained" 
-            color="primary"
             size="large"
+            sx={{ 
+              bgcolor: '#BE550F',
+              color: '#FFFFFF',
+              '&:hover': {
+                bgcolor: '#9A4409'
+              }
+            }}
             onClick={() => {
               // Navigate to medical history page
               navigate('/patient/medical-history');
@@ -546,7 +561,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         }}>
           
           {/* Form Title */}
-          <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#2F4F4F' }}>
+          <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#64748b' }}>
             {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
           </Typography>
           
@@ -565,6 +580,14 @@ const Patient = ({ userInfo }: PatientProps) => {
                 margin="normal"
                 fullWidth
                 required
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
               />
               {errors.firstName && (
                 <FormHelperText sx={{ color: "error.main" }}>
@@ -580,6 +603,14 @@ const Patient = ({ userInfo }: PatientProps) => {
                 margin="normal"
                 fullWidth
                 required
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
               />
               {errors.lastName && (
                 <FormHelperText sx={{ color: "error.main" }}>
@@ -599,7 +630,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             {/* Gender Selection */}
             <Box sx={{ flex: 1 }}>
               <FormControl component="fieldset">
-                <FormLabel component="legend" sx={{ mb: 2 }}>Gender</FormLabel>
+                <FormLabel component="legend" sx={{ mb: 2, color: '#BE550F', textAlign: 'left', display: 'block' }}>Gender</FormLabel>
                 
                 <ToggleButtonGroup
                   color="primary"
@@ -639,6 +670,14 @@ const Patient = ({ userInfo }: PatientProps) => {
                 margin="normal"
                 fullWidth
                 inputProps={{ min: 1, max: 150 }}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
               />
               {errors.age && (
                 <FormHelperText sx={{ color: "error.main" }}>
@@ -665,6 +704,14 @@ const Patient = ({ userInfo }: PatientProps) => {
                 fullWidth
                 inputProps={{ min: 0, step: 0.1 }}
                 helperText="centimeters"
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
               />
               {errors.height && (
                 <FormHelperText sx={{ color: "error.main" }}>
@@ -682,6 +729,14 @@ const Patient = ({ userInfo }: PatientProps) => {
                 fullWidth
                 inputProps={{ min: 0, step: 0.1 }}
                 helperText="kilograms"
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
               />
               {errors.weight && (
                 <FormHelperText sx={{ color: "error.main" }}>
@@ -765,8 +820,11 @@ const Patient = ({ userInfo }: PatientProps) => {
           <Button 
             type="submit" 
             variant="contained" 
+            color="primary"
             disabled={isSubmitting}
-            sx={{ minWidth: 140 }}
+            sx={{ 
+              minWidth: 140
+            }}
             onClick={() => {
               console.log("=== BUTTON CLICKED ===");
               console.log("Button clicked, form should submit");

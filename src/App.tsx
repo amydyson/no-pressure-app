@@ -2,13 +2,15 @@ import { BrowserRouter } from "react-router-dom";
 import Home from "./components/common/Home";
 import SignOut from "./components/common/SignOut";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Toolbar, Typography, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, ThemeProvider } from "@mui/material";
+import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
 
 function App() {
   return (
-    <BrowserRouter>
-      <CssBaseline />
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <CssBaseline />
       <AppBar position="sticky" sx={{ 
         mb: 0,
         bgcolor: '#2F4F4F',
@@ -45,6 +47,7 @@ function App() {
       </AppBar>
       <Home />
     </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
