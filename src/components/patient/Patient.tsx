@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useRef } from "react";
 import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper, FormControl, FormLabel, ToggleButton, ToggleButtonGroup, Switch, FormControlLabel, MenuItem, Select, InputLabel } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,15 +70,20 @@ const Patient = ({ userInfo }: PatientProps) => {
   const [isSmoker, setIsSmoker] = useState<boolean>(false); // Default to non-smoker
   const [exercisesDaily, setExercisesDaily] = useState<boolean>(false); // Default to no daily exercise
   
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  // For caret management in DOB field
+  const dobInputRef = useRef<HTMLInputElement>(null);
 
   // Debug validation errors
   console.log("Current form validation errors:", errors);
@@ -835,8 +841,37 @@ const Patient = ({ userInfo }: PatientProps) => {
                 label={language === 'pt' ? 'Data de Nascimento' : 'Date of Birth'}
                 placeholder={language === 'pt' ? 'DD/MM/AAAA' : 'DD/MM/YYYY'}
                 type="text"
-                inputProps={{ inputMode: 'numeric', pattern: '[0-3][0-9]/[0-1][0-9]/[1-2][0-9]{3}' }}
-                {...register("dateOfBirth")}
+                inputProps={{ inputMode: 'numeric', pattern: '[0-3][0-9]/[0-1][0-9]/[1-2][0-9]{3}', maxLength: 10 }}
+                value={watch("dateOfBirth") || ""}
+                inputRef={dobInputRef}
+                onChange={e => {
+                  const input = e.target;
+                  const caret = input.selectionStart || 0;
+                  let raw = input.value.replace(/[^0-9]/g, "");
+                  if (raw.length > 8) raw = raw.slice(0, 8);
+                  let formatted = raw;
+                  if (raw.length > 4) {
+                    formatted = raw.slice(0,2) + "/" + raw.slice(2,4) + "/" + raw.slice(4);
+                  } else if (raw.length > 2) {
+                    formatted = raw.slice(0,2) + "/" + raw.slice(2);
+                  }
+                  // Calculate new caret position
+                  let nextCaret = caret;
+                  const inputType = (e.nativeEvent as InputEvent).inputType || '';
+                  if (input.value[caret-1] === '/' && inputType === 'deleteContentBackward') {
+                    nextCaret = caret - 1;
+                  } else if (raw.length > 2 && caret === 3 && inputType !== 'deleteContentBackward') {
+                    nextCaret = caret + 1;
+                  } else if (raw.length > 4 && caret === 6 && inputType !== 'deleteContentBackward') {
+                    nextCaret = caret + 1;
+                  }
+                  setValue("dateOfBirth", formatted, { shouldValidate: true });
+                  setTimeout(() => {
+                    if (dobInputRef.current && document.activeElement === dobInputRef.current) {
+                      dobInputRef.current.setSelectionRange(nextCaret, nextCaret);
+                    }
+                  }, 0);
+                }}
                 error={!!errors.dateOfBirth}
                 margin="normal"
                 fullWidth
