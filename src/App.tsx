@@ -115,7 +115,7 @@ function NavigationBar({ language, setLanguage }: { language: string, setLanguag
 }
 
 function App() {
-  const [language, setLanguage] = React.useState('en');
+  const [language, setLanguage] = React.useState('pt');
   return (
     <ThemeProvider theme={theme}>
       <LanguageContext.Provider value={{ language, setLanguage }}>

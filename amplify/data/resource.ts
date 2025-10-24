@@ -19,12 +19,13 @@ const schema = a.schema({
       lastName: a.string().required(),
       email: a.string(), // Optional: store email for easy reference
       avatar: a.string(), // Optional: avatar selection (book, cat, dog, flower)
-      gender: a.string(), // Optional: male or female
-      isSmoker: a.boolean(), // Optional: smoker status
-      dateOfBirth: a.string(), // Optional: patient date of birth
-      height: a.float(), // Optional: height in cm
-      weight: a.float(), // Optional: weight in kg
-      exercisesDaily: a.boolean(), // Optional: exercises 30+ minutes daily
+  gender: a.string(), // Optional: male or female
+  isSmoker: a.boolean(), // Optional: smoker status
+  dateOfBirth: a.string(), // Optional: patient date of birth
+  height: a.float(), // Optional: height in cm
+  weight: a.float(), // Optional: weight in kg
+  exercisesDaily: a.boolean(), // Optional: exercises 30+ minutes daily
+  language: a.string(), // Preferred language (en or pt)
     })
     .authorization((allow) => [allow.publicApiKey()]),
 });
