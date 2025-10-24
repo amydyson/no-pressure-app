@@ -12,6 +12,11 @@ import bookIcon from "../../assets/images/avatar-icons/book.png";
 import catIcon from "../../assets/images/avatar-icons/cat.png";
 import dogIcon from "../../assets/images/avatar-icons/dog.png";
 import flowerIcon from "../../assets/images/avatar-icons/flower.png";
+import guitarIcon from "../../assets/images/avatar-icons/guitar.png";
+import headphonesIcon from "../../assets/images/avatar-icons/headphones.png";
+import moonIcon from "../../assets/images/avatar-icons/moon.png";
+import sunIcon from "../../assets/images/avatar-icons/sun.png";
+import umbrellaIcon from "../../assets/images/avatar-icons/umbrella.png";
 
 const schema = z.object({
   firstName: z
@@ -69,6 +74,7 @@ const Patient = ({ userInfo }: PatientProps) => {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -443,7 +449,51 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </Typography>
               </Box>
               
-              {/* Second Row */}
+              {/* Avatar Display */}
+              <Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Avatar
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {existingPatient.avatar ? (
+                    <>
+                      {(existingPatient.avatar === 'book' ||
+                        existingPatient.avatar === 'cat' ||
+                        existingPatient.avatar === 'dog' ||
+                        existingPatient.avatar === 'flower' ||
+                        existingPatient.avatar === 'guitar' ||
+                        existingPatient.avatar === 'headphones' ||
+                        existingPatient.avatar === 'moon' ||
+                        existingPatient.avatar === 'sun' ||
+                        existingPatient.avatar === 'umbrella') && (
+                        <img 
+                          src={
+                            existingPatient.avatar === 'book' ? bookIcon :
+                            existingPatient.avatar === 'cat' ? catIcon :
+                            existingPatient.avatar === 'dog' ? dogIcon :
+                            existingPatient.avatar === 'flower' ? flowerIcon :
+                            existingPatient.avatar === 'guitar' ? guitarIcon :
+                            existingPatient.avatar === 'headphones' ? headphonesIcon :
+                            existingPatient.avatar === 'moon' ? moonIcon :
+                            existingPatient.avatar === 'sun' ? sunIcon :
+                            umbrellaIcon
+                          } 
+                          alt={existingPatient.avatar} 
+                          style={{ width: 32, height: 32 }} 
+                        />
+                      )}
+                      <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem', textTransform: 'capitalize' }}>
+                        {existingPatient.avatar}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
+                      No avatar selected
+                    </Typography>
+                  )}
+                </Box>
+              </Box>
+              
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                   Gender
@@ -646,7 +696,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               </InputLabel>
               <Select
                 {...register("avatar")}
-                defaultValue=""
+                value={watch("avatar") || ""}
                 label="Avatar"
                 sx={{
                   "& .MuiSelect-select": {
@@ -681,6 +731,36 @@ const Patient = ({ userInfo }: PatientProps) => {
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={flowerIcon} alt="Flower" style={{ width: 24, height: 24 }} />
                     Flower
+                  </Box>
+                </MenuItem>
+                <MenuItem value="guitar">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={guitarIcon} alt="Guitar" style={{ width: 24, height: 24 }} />
+                    Guitar
+                  </Box>
+                </MenuItem>
+                <MenuItem value="headphones">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={headphonesIcon} alt="Headphones" style={{ width: 24, height: 24 }} />
+                    Headphones
+                  </Box>
+                </MenuItem>
+                <MenuItem value="moon">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={moonIcon} alt="Moon" style={{ width: 24, height: 24 }} />
+                    Moon
+                  </Box>
+                </MenuItem>
+                <MenuItem value="sun">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={sunIcon} alt="Sun" style={{ width: 24, height: 24 }} />
+                    Sun
+                  </Box>
+                </MenuItem>
+                <MenuItem value="umbrella">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <img src={umbrellaIcon} alt="Umbrella" style={{ width: 24, height: 24 }} />
+                    Umbrella
                   </Box>
                 </MenuItem>
               </Select>
