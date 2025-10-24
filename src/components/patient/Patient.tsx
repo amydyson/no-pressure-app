@@ -437,7 +437,6 @@ const Patient = ({ userInfo }: PatientProps) => {
               gap: 3,
               textAlign: 'left',
               maxWidth: { xs: '500px', md: 'none' },
-              width: '100%'
             }}>
               
               {/* First Row - Names Side by Side */}
@@ -745,7 +744,13 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
-            <Box sx={{ flex: 1, minWidth: 180, mt: { xs: 0, md: '12px' } }}>
+            <Box sx={{
+              flex: 1,
+              minWidth: 180,
+              mt: { xs: 0, md: '12px' },
+              display: 'flex',
+              justifyContent: 'flex-end'
+            }}>
               <FormControl fullWidth>
                 <InputLabel sx={{ color: "#BE550F" }}>
                   {language === 'pt' ? 'Avatar' : 'Avatar'}
