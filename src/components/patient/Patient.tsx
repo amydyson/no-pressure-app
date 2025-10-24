@@ -30,11 +30,8 @@ const schema = z.object({
   avatar: z
     .string()
     .optional(),
-  age: z
-    .number({ invalid_type_error: "Age must be a number" })
-    .int({ message: "Age must be a whole number" })
-    .min(1, { message: "Age must be at least 1" })
-    .max(150, { message: "Age must be less than 150" })
+  dateOfBirth: z
+    .string()
     .optional(),
   height: z
     .number({ invalid_type_error: "Height must be a number" })
@@ -167,7 +164,7 @@ const Patient = ({ userInfo }: PatientProps) => {
       console.log("=== FORM SUBMISSION DEBUG ===");
       console.log("Is editing:", isEditing);
       console.log("Form data:", data);
-      console.log("Age value:", data.age, "Type:", typeof data.age);
+      console.log("Date of birth value:", data.dateOfBirth, "Type:", typeof data.dateOfBirth);
       console.log("Current state values:", {
         gender,
         isSmoker,
@@ -231,7 +228,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             avatar: data.avatar || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-            age: data.age || undefined,
+            dateOfBirth: data.dateOfBirth || undefined,
             height: data.height || undefined,
             weight: data.weight || undefined,
             exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
@@ -246,7 +243,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             avatar: data.avatar || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-            age: data.age || undefined,
+            dateOfBirth: data.dateOfBirth || undefined,
             height: data.height || undefined,
             weight: data.weight || undefined,
             exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
@@ -266,7 +263,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           avatar: data.avatar || undefined,
           gender: gender || undefined,
           isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-          age: data.age || undefined,
+          dateOfBirth: data.dateOfBirth || undefined,
           height: data.height || undefined,
           weight: data.weight || undefined,
           exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
@@ -505,10 +502,10 @@ const Patient = ({ userInfo }: PatientProps) => {
               
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Age
+                  Date of Birth
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
-                  {existingPatient.age ? `${existingPatient.age} years` : 'Not provided'}
+                  {existingPatient.dateOfBirth ? new Date(existingPatient.dateOfBirth).toLocaleDateString() : 'Not provided'}
                 </Typography>
               </Box>
               
@@ -576,7 +573,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                 firstName: existingPatient.firstName,
                 lastName: existingPatient.lastName,
                 avatar: existingPatient.avatar || undefined,
-                age: existingPatient.age || undefined,
+                dateOfBirth: existingPatient.dateOfBirth || undefined,
                 height: existingPatient.height || undefined,
                 weight: existingPatient.weight || undefined
               });
@@ -801,22 +798,18 @@ const Patient = ({ userInfo }: PatientProps) => {
               </FormControl>
             </Box>
             
-            {/* Age Field */}
+            {/* Date of Birth Field */}
             <Box sx={{ flex: 1 }}>
               <TextField
-                label="Age (years)"
-                type="number"
-                {...register("age", { 
-                  valueAsNumber: true,
-                  setValueAs: (value) => {
-                    console.log("Age input value:", value, "Type:", typeof value);
-                    return value === "" ? undefined : Number(value);
-                  }
-                })}
-                error={!!errors.age}
+                label="Date of Birth"
+                type="date"
+                {...register("dateOfBirth")}
+                error={!!errors.dateOfBirth}
                 margin="normal"
                 fullWidth
-                inputProps={{ min: 1, max: 150 }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 sx={{
                   '& .MuiInputLabel-root': {
                     color: '#BE550F',
@@ -826,9 +819,9 @@ const Patient = ({ userInfo }: PatientProps) => {
                   }
                 }}
               />
-              {errors.age && (
+              {errors.dateOfBirth && (
                 <FormHelperText sx={{ color: "error.main" }}>
-                  {errors.age.message}
+                  {errors.dateOfBirth.message}
                 </FormHelperText>
               )}
             </Box>

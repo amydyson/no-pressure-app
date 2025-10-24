@@ -21,7 +21,7 @@ const schema = a.schema({
       avatar: a.string(), // Optional: avatar selection (book, cat, dog, flower)
       gender: a.string(), // Optional: male or female
       isSmoker: a.boolean(), // Optional: smoker status
-      age: a.integer(), // Optional: patient age
+      dateOfBirth: a.string(), // Optional: patient date of birth
       height: a.float(), // Optional: height in cm
       weight: a.float(), // Optional: weight in kg
       exercisesDaily: a.boolean(), // Optional: exercises 30+ minutes daily
