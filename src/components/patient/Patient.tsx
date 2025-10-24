@@ -395,7 +395,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           {/* Right - Patient Details in Two Columns */}
           <Box sx={{ 
             flex: { xs: 'none', md: 2 }, 
-             border: { xs: '1px solid #1975d1', md: 'none' },
+             border: { xs: '1px solid #BE550F', md: 'none' },
             p: 4,
             width: '100%',
             display: 'flex',
