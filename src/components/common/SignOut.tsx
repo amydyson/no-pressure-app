@@ -1,8 +1,11 @@
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import Button from "@mui/material/Button";
+import { useContext } from "react";
+import { LanguageContext } from "../../App";
 
 const SignOut = () => {
   const { signOut } = useAuthenticator();
+  const { language } = useContext(LanguageContext) as { language: string };
 
   return (
     <Button 
@@ -18,7 +21,7 @@ const SignOut = () => {
         }
       }}
     >
-      Sign Out
+      {language === 'pt' ? 'Sair' : 'Sign Out'}
     </Button>
   );
 };

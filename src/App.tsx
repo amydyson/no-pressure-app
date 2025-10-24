@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import Home from "./components/common/Home";
 import SignOut from "./components/common/SignOut";
@@ -7,12 +8,18 @@ import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
 
 // Navigation Bar component that can use useNavigate
-function NavigationBar() {
+// Create a context for language
+export const LanguageContext = React.createContext({ language: 'en', setLanguage: (_: string) => {} });
+
+function NavigationBar({ language, setLanguage }: { language: string, setLanguage: (lang: string) => void }) {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
     navigate('/');
   };
+
+  // Header text translations
+  const headerText = language === 'pt' ? { top: 'SEM', bottom: 'PRESSÃO' } : { top: 'NO', bottom: 'PRESSURE' };
 
   return (
     <AppBar position="sticky" sx={{ 
@@ -62,7 +69,7 @@ function NavigationBar() {
               textTransform: 'uppercase',
               mb: '-2px'
             }}>
-              NO
+              {headerText.top}
             </Typography>
             <Typography variant="body2" component="div" sx={{ 
               color: '#F4c430',
@@ -72,9 +79,32 @@ function NavigationBar() {
               textTransform: 'uppercase',
               mt: '-2px'
             }}>
-              PRESSURE
+              {headerText.bottom}
             </Typography>
           </Box>
+        </Box>
+        {/* Language Switcher Dropdown */}
+        <Box sx={{ ml: 2, mr: 2 }}>
+          <select
+            value={language}
+            onChange={e => setLanguage(e.target.value)}
+            style={{
+              background: '#fff',
+              color: '#2F4F4F',
+              borderRadius: 4,
+              border: '1px solid #BE550F',
+              padding: '4px 12px',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              outline: 'none',
+              cursor: 'pointer',
+              minWidth: 90
+            }}
+            aria-label="Language Switcher"
+          >
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+          </select>
         </Box>
         <Box>
           <SignOut />
@@ -85,20 +115,23 @@ function NavigationBar() {
 }
 
 function App() {
+  const [language, setLanguage] = React.useState('en');
   return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Box sx={{ 
-          bgcolor: '#d7e9f7', 
-          minHeight: '100vh',
-          width: '100%',
-          position: 'relative'
-        }}>
-          <CssBaseline />
-          <NavigationBar />
-          <Home />
-        </Box>
-      </BrowserRouter>
+      <LanguageContext.Provider value={{ language, setLanguage }}>
+        <BrowserRouter>
+          <Box sx={{ 
+            bgcolor: '#d7e9f7', 
+            minHeight: '100vh',
+            width: '100%',
+            position: 'relative'
+          }}>
+            <CssBaseline />
+            <NavigationBar language={language} setLanguage={setLanguage} />
+            <Home />
+          </Box>
+        </BrowserRouter>
+      </LanguageContext.Provider>
     </ThemeProvider>
   );
 }

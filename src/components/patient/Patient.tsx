@@ -4,7 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../../amplify/data/resource";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { LanguageContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import manImage from "../../assets/images/illustrations/man.png";
 import womanImage from "../../assets/images/illustrations/woman.png";
@@ -57,6 +58,8 @@ interface PatientProps {
 
 const Patient = ({ userInfo }: PatientProps) => {
   const navigate = useNavigate();
+  // Get language from context (always call at top level)
+  const { language } = useContext(LanguageContext) as { language: string };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error' | 'info', text: string} | null>(null);
   const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
@@ -334,6 +337,8 @@ const Patient = ({ userInfo }: PatientProps) => {
     );
   }
 
+
+
   // Existing patient screen
   if (existingPatient) {
     return (
@@ -358,7 +363,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         )}
         
         <Typography variant="h4" gutterBottom sx={{ color: '#2F4F4F' }}>
-          Patient Information
+          {language === 'pt' ? 'Informações do Paciente' : 'Patient Information'}
         </Typography>
         
         {/* Main Content - Two Section Layout */}
@@ -438,7 +443,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               {/* First Row - Names Side by Side */}
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 0.5, color: '#BE550F' }}>
-                  First Name
+                  {language === 'pt' ? 'Nome' : 'First Name'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.firstName}
@@ -447,7 +452,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Last Name
+                  {language === 'pt' ? 'Sobrenome' : 'Last Name'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.lastName}
@@ -457,7 +462,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               {/* Avatar Display */}
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Avatar
+                  {language === 'pt' ? 'Avatar' : 'Avatar'}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   {existingPatient.avatar ? (
@@ -487,9 +492,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                           style={{ width: 32, height: 32 }} 
                         />
                       )}
-                      <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem', textTransform: 'capitalize' }}>
-                        {existingPatient.avatar}
-                      </Typography>
+                      {/* Avatar name removed, only icon shown */}
                     </>
                   ) : (
                     <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
@@ -501,16 +504,20 @@ const Patient = ({ userInfo }: PatientProps) => {
               
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Gender
+                  {language === 'pt' ? 'Gênero' : 'Gender'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
-                  {existingPatient.gender ? existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1) : 'Not specified'}
+                  {existingPatient.gender
+                    ? language === 'pt'
+                      ? (existingPatient.gender === 'female' ? 'Feminino' : existingPatient.gender === 'male' ? 'Masculino' : existingPatient.gender)
+                      : (existingPatient.gender.charAt(0).toUpperCase() + existingPatient.gender.slice(1))
+                    : (language === 'pt' ? 'Não especificado' : 'Not specified')}
                 </Typography>
               </Box>
               
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Date of Birth
+                  {language === 'pt' ? 'Data de Nascimento' : 'Date of Birth'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.dateOfBirth ? (() => {
@@ -530,7 +537,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               {/* Third Row */}
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Height
+                  {language === 'pt' ? 'Altura' : 'Height'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.height ? `${existingPatient.height} cm` : 'Not provided'}
@@ -539,7 +546,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Weight
+                  {language === 'pt' ? 'Peso' : 'Weight'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
                   {existingPatient.weight ? `${existingPatient.weight} kg` : 'Not provided'}
@@ -549,19 +556,27 @@ const Patient = ({ userInfo }: PatientProps) => {
               {/* Fourth Row */}
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Smoker
+                  {language === 'pt' ? 'Fumante' : 'Smoker'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
-                  {existingPatient.isSmoker !== undefined ? (existingPatient.isSmoker ? 'Yes' : 'No') : 'Not specified'}
+                  {existingPatient.isSmoker !== undefined
+                    ? (existingPatient.isSmoker
+                        ? (language === 'pt' ? 'Sim' : 'Yes')
+                        : (language === 'pt' ? 'Não' : 'No'))
+                    : (language === 'pt' ? 'Não especificado' : 'Not specified')}
                 </Typography>
               </Box>
               
               <Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                  Exercises Daily
+                  {language === 'pt' ? 'Exercita-se Diariamente' : 'Exercises Daily'}
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
-                  {existingPatient.exercisesDaily !== undefined ? (existingPatient.exercisesDaily ? 'Yes' : 'No') : 'Not specified'}
+                  {existingPatient.exercisesDaily !== undefined
+                    ? (existingPatient.exercisesDaily
+                        ? (language === 'pt' ? 'Sim' : 'Yes')
+                        : (language === 'pt' ? 'Não' : 'No'))
+                    : (language === 'pt' ? 'Não especificado' : 'Not specified')}
                 </Typography>
               </Box>
             </Box>
@@ -601,7 +616,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               setExercisesDaily(existingPatient.exercisesDaily || false);
             }}
           >
-            Edit Information
+            {language === 'pt' ? 'Editar Informações' : 'Edit Information'}
           </Button>
           
           <Button 
@@ -619,7 +634,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               navigate('/patient/medical-history');
             }}
           >
-            Next →
+            {language === 'pt' ? 'Próximo →' : 'Next →'}
           </Button>
         </Box>
       </Paper>
@@ -657,7 +672,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           }}>
             <Box sx={{ flex: 1 }}>
               <TextField
-                label="First Name"
+                label={language === 'pt' ? 'Nome' : 'First Name'}
                 {...register("firstName")}
                 error={!!errors.firstName}
                 margin="normal"
@@ -680,7 +695,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             </Box>
             <Box sx={{ flex: 1 }}>
               <TextField
-                label="Last Name"
+                label={language === 'pt' ? 'Sobrenome' : 'Last Name'}
                 {...register("lastName")}
                 error={!!errors.lastName}
                 margin="normal"
@@ -707,12 +722,12 @@ const Patient = ({ userInfo }: PatientProps) => {
           <Box sx={{ mb: 2 }}>
             <FormControl fullWidth>
               <InputLabel sx={{ color: "#BE550F", fontWeight: "bold" }}>
-                Avatar
+                {language === 'pt' ? 'Avatar' : 'Avatar'}
               </InputLabel>
               <Select
                 {...register("avatar")}
                 value={watch("avatar") || ""}
-                label="Avatar"
+                label={language === 'pt' ? 'Avatar' : 'Avatar'}
                 sx={{
                   "& .MuiSelect-select": {
                     display: "flex",
@@ -722,60 +737,51 @@ const Patient = ({ userInfo }: PatientProps) => {
                 }}
               >
                 <MenuItem value="">
-                  <em>Choose your avatar</em>
+                  <em>{language === 'pt' ? 'Escolha seu avatar' : 'Choose your avatar'}</em>
                 </MenuItem>
                 <MenuItem value="book">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={bookIcon} alt="Book" style={{ width: 24, height: 24 }} />
-                    Book
                   </Box>
                 </MenuItem>
                 <MenuItem value="cat">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <img src={catIcon} alt="Cat" style={{ width: 24, height: 24 }} />
-                    Cat
+                    <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 24, height: 24 }} />
                   </Box>
                 </MenuItem>
                 <MenuItem value="dog">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={dogIcon} alt="Dog" style={{ width: 24, height: 24 }} />
-                    Dog
                   </Box>
                 </MenuItem>
                 <MenuItem value="flower">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={flowerIcon} alt="Flower" style={{ width: 24, height: 24 }} />
-                    Flower
                   </Box>
                 </MenuItem>
                 <MenuItem value="guitar">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={guitarIcon} alt="Guitar" style={{ width: 24, height: 24 }} />
-                    Guitar
                   </Box>
                 </MenuItem>
                 <MenuItem value="headphones">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={headphonesIcon} alt="Headphones" style={{ width: 24, height: 24 }} />
-                    Headphones
                   </Box>
                 </MenuItem>
                 <MenuItem value="moon">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={moonIcon} alt="Moon" style={{ width: 24, height: 24 }} />
-                    Moon
                   </Box>
                 </MenuItem>
                 <MenuItem value="sun">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={sunIcon} alt="Sun" style={{ width: 24, height: 24 }} />
-                    Sun
                   </Box>
                 </MenuItem>
                 <MenuItem value="umbrella">
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <img src={umbrellaIcon} alt="Umbrella" style={{ width: 24, height: 24 }} />
-                    Umbrella
                   </Box>
                 </MenuItem>
               </Select>
@@ -792,7 +798,9 @@ const Patient = ({ userInfo }: PatientProps) => {
             {/* Gender Selection */}
             <Box sx={{ flex: 1 }}>
               <FormControl component="fieldset">
-                <FormLabel component="legend" sx={{ mb: 2, color: '#BE550F', textAlign: 'left', display: 'block' }}>Gender</FormLabel>
+                <FormLabel component="legend" sx={{ mb: 2, color: '#BE550F', textAlign: 'left', display: 'block' }}>
+                  {language === 'pt' ? 'Gênero' : 'Gender'}
+                </FormLabel>
                 
                 <ToggleButtonGroup
                   color="primary"
@@ -807,10 +815,10 @@ const Patient = ({ userInfo }: PatientProps) => {
                   sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
                 >
                   <ToggleButton value="female" aria-label="female">
-                    Female
+                    {language === 'pt' ? 'Feminino' : 'Female'}
                   </ToggleButton>
                   <ToggleButton value="male" aria-label="male">
-                    Male
+                    {language === 'pt' ? 'Masculino' : 'Male'}
                   </ToggleButton>
                 </ToggleButtonGroup>
               </FormControl>
@@ -819,7 +827,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             {/* Date of Birth Field */}
             <Box sx={{ flex: 1 }}>
               <TextField
-                label="Date of Birth"
+                label={language === 'pt' ? 'Data de Nascimento' : 'Date of Birth'}
                 type="date"
                 {...register("dateOfBirth")}
                 error={!!errors.dateOfBirth}
@@ -854,14 +862,14 @@ const Patient = ({ userInfo }: PatientProps) => {
           }}>
             <Box sx={{ flex: 1 }}>
               <TextField
-                label="Height (cm)"
+                label={language === 'pt' ? 'Altura (cm)' : 'Height (cm)'}
                 type="number"
                 {...register("height", { valueAsNumber: true })}
                 error={!!errors.height}
                 margin="normal"
                 fullWidth
                 inputProps={{ min: 0, step: 0.1 }}
-                helperText="centimeters"
+                helperText={language === 'pt' ? 'centímetros' : 'centimeters'}
                 sx={{
                   '& .MuiInputLabel-root': {
                     color: '#BE550F',
@@ -879,14 +887,14 @@ const Patient = ({ userInfo }: PatientProps) => {
             </Box>
             <Box sx={{ flex: 1 }}>
               <TextField
-                label="Weight (kg)"
+                label={language === 'pt' ? 'Peso (kg)' : 'Weight (kg)'}
                 type="number"
                 {...register("weight", { valueAsNumber: true })}
                 error={!!errors.weight}
                 margin="normal"
                 fullWidth
                 inputProps={{ min: 0, step: 0.1 }}
-                helperText="kilograms"
+                helperText={language === 'pt' ? 'quilogramas' : 'kilograms'}
                 sx={{
                   '& .MuiInputLabel-root': {
                     color: '#BE550F',
@@ -915,7 +923,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                     color="primary"
                   />
                 }
-                label="I am a smoker"
+                label={language === 'pt' ? 'Eu sou fumante' : 'I am a smoker'}
               />
             </FormControl>
 
@@ -928,7 +936,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                     color="primary"
                   />
                 }
-                label="I exercise 30+ minutes daily"
+                label={language === 'pt' ? 'Eu me exercito 30+ minutos diariamente' : 'I exercise 30+ minutes daily'}
               />
             </FormControl>
           </Box>
@@ -971,7 +979,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               }}
               disabled={isSubmitting}
             >
-              Cancel
+              {language === 'pt' ? 'Cancelar' : 'Cancel'}
             </Button>
           )}
           
@@ -991,8 +999,12 @@ const Patient = ({ userInfo }: PatientProps) => {
             }}
           >
             {isSubmitting 
-              ? (isEditing ? 'Updating...' : 'Submitting...') 
-              : (isEditing ? 'Make change' : 'Add Patient')
+              ? (isEditing 
+                  ? (language === 'pt' ? 'Atualizando...' : 'Updating...') 
+                  : (language === 'pt' ? 'Enviando...' : 'Submitting...')) 
+              : (isEditing 
+                  ? (language === 'pt' ? 'Salvar Alteração' : 'Make change') 
+                  : (language === 'pt' ? 'Adicionar Paciente' : 'Add Patient'))
             }
           </Button>
         </Box>
