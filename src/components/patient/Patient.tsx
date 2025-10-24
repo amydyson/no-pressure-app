@@ -165,6 +165,22 @@ const Patient = ({ userInfo }: PatientProps) => {
       console.log("Is editing:", isEditing);
       console.log("Form data:", data);
       console.log("Date of birth value:", data.dateOfBirth, "Type:", typeof data.dateOfBirth);
+      
+      // Ensure date is properly formatted as YYYY-MM-DD string to avoid timezone issues
+      let processedDateOfBirth = data.dateOfBirth;
+      if (processedDateOfBirth) {
+        // HTML date inputs return dates in YYYY-MM-DD format
+        // We keep this format to avoid timezone conversion issues
+        if (processedDateOfBirth instanceof Date) {
+          // If somehow it's a Date object, convert safely
+          const year = processedDateOfBirth.getFullYear();
+          const month = String(processedDateOfBirth.getMonth() + 1).padStart(2, '0');
+          const day = String(processedDateOfBirth.getDate()).padStart(2, '0');
+          processedDateOfBirth = `${year}-${month}-${day}`;
+        }
+        console.log("Processed date of birth:", processedDateOfBirth);
+      }
+      
       console.log("Current state values:", {
         gender,
         isSmoker,
@@ -228,7 +244,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             avatar: data.avatar || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-            dateOfBirth: data.dateOfBirth || undefined,
+            dateOfBirth: processedDateOfBirth || undefined,
             height: data.height || undefined,
             weight: data.weight || undefined,
             exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
@@ -243,7 +259,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             avatar: data.avatar || undefined,
             gender: gender || undefined,
             isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-            dateOfBirth: data.dateOfBirth || undefined,
+            dateOfBirth: processedDateOfBirth || undefined,
             height: data.height || undefined,
             weight: data.weight || undefined,
             exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
@@ -263,7 +279,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           avatar: data.avatar || undefined,
           gender: gender || undefined,
           isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-          dateOfBirth: data.dateOfBirth || undefined,
+          dateOfBirth: processedDateOfBirth || undefined,
           height: data.height || undefined,
           weight: data.weight || undefined,
           exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
@@ -505,7 +521,17 @@ const Patient = ({ userInfo }: PatientProps) => {
                   Date of Birth
                 </Typography>
                 <Typography variant="body1" color="text.primary" sx={{ fontSize: '1.1rem' }}>
-                  {existingPatient.dateOfBirth ? new Date(existingPatient.dateOfBirth).toLocaleDateString() : 'Not provided'}
+                  {existingPatient.dateOfBirth ? (() => {
+                    // Handle date formatting safely to avoid timezone issues
+                    if (existingPatient.dateOfBirth.includes('-')) {
+                      // If it's in YYYY-MM-DD format, convert to MM/DD/YYYY
+                      const [year, month, day] = existingPatient.dateOfBirth.split('-');
+                      return `${month}/${day}/${year}`;
+                    } else {
+                      // If it's already in a different format, display as is
+                      return existingPatient.dateOfBirth;
+                    }
+                  })() : 'Not provided'}
                 </Typography>
               </Box>
               
