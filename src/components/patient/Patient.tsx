@@ -660,7 +660,9 @@ const Patient = ({ userInfo }: PatientProps) => {
           
           {/* Form Title */}
           <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#64748b' }}>
-            {isEditing ? 'Edit Your Patient Information' : 'Create Your Patient Profile'}
+            {isEditing
+              ? (language === 'pt' ? 'Edite suas informações de paciente' : 'Edit Your Patient Information')
+              : (language === 'pt' ? 'Crie seu perfil de paciente' : 'Create Your Patient Profile')}
           </Typography>
           
           {/* Name Fields */}
