@@ -448,20 +448,20 @@ const Patient = ({ userInfo }: PatientProps) => {
                         existingPatient.avatar === 'moon' ||
                         existingPatient.avatar === 'sun' ||
                         existingPatient.avatar === 'umbrella') && (
-                        <img 
-                          src={
-                            existingPatient.avatar === 'book' ? bookIcon :
-                            existingPatient.avatar === 'cat' ? catIcon :
-                            existingPatient.avatar === 'dog' ? dogIcon :
-                            existingPatient.avatar === 'flower' ? flowerIcon :
-                            existingPatient.avatar === 'guitar' ? guitarIcon :
-                            existingPatient.avatar === 'headphones' ? headphonesIcon :
-                            existingPatient.avatar === 'moon' ? moonIcon :
-                            existingPatient.avatar === 'sun' ? sunIcon :
-                            umbrellaIcon
-                          } 
-                          alt={existingPatient.avatar} 
-                          style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1' }} 
+                          <img
+                            src={
+                              existingPatient.avatar === 'book' ? bookIcon :
+                              existingPatient.avatar === 'cat' ? catIcon :
+                              existingPatient.avatar === 'dog' ? dogIcon :
+                              existingPatient.avatar === 'flower' ? flowerIcon :
+                              existingPatient.avatar === 'guitar' ? guitarIcon :
+                              existingPatient.avatar === 'headphones' ? headphonesIcon :
+                              existingPatient.avatar === 'moon' ? moonIcon :
+                              existingPatient.avatar === 'sun' ? sunIcon :
+                              umbrellaIcon
+                            }
+                            alt={existingPatient.avatar}
+                            style={{ width: 56, height: 56, objectFit: 'contain', aspectRatio: '1/1' }}
                         />
                       )}
                       {/* Avatar name removed, only icon shown */}
