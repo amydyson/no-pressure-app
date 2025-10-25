@@ -461,7 +461,7 @@ const Patient = ({ userInfo }: PatientProps) => {
                             umbrellaIcon
                           } 
                           alt={existingPatient.avatar} 
-                          style={{ width: 32, height: 32 }} 
+                          style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1' }} 
                         />
                       )}
                       {/* Avatar name removed, only icon shown */}
@@ -750,47 +750,47 @@ const Patient = ({ userInfo }: PatientProps) => {
                   </MenuItem>
                   <MenuItem value="book">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={bookIcon} alt="Book" style={{ width: 32, height: 32 }} />
+                      <img src={bookIcon} alt="Book" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="cat">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 32, height: 32 }} />
+                      <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="dog">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={dogIcon} alt="Dog" style={{ width: 32, height: 32 }} />
+                      <img src={dogIcon} alt="Dog" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="flower">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={flowerIcon} alt="Flower" style={{ width: 32, height: 32 }} />
+                      <img src={flowerIcon} alt="Flower" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="guitar">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={guitarIcon} alt="Guitar" style={{ width: 32, height: 32 }} />
+                      <img src={guitarIcon} alt="Guitar" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="headphones">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={headphonesIcon} alt="Headphones" style={{ width: 32, height: 32 }} />
+                      <img src={headphonesIcon} alt="Headphones" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="moon">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={moonIcon} alt="Moon" style={{ width: 32, height: 32 }} />
+                      <img src={moonIcon} alt="Moon" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="sun">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={sunIcon} alt="Sun" style={{ width: 32, height: 32 }} />
+                      <img src={sunIcon} alt="Sun" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                   <MenuItem value="umbrella">
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img src={umbrellaIcon} alt="Umbrella" style={{ width: 32, height: 32 }} />
+                      <img src={umbrellaIcon} alt="Umbrella" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
                     </Box>
                   </MenuItem>
                 </Select>
