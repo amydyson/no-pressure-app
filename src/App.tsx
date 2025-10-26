@@ -2,6 +2,15 @@ import React from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import Home from "./components/common/Home";
 import SignOut from "./components/common/SignOut";
+import bookIcon from "./assets/images/avatar-icons/book.png";
+import catIcon from "./assets/images/avatar-icons/cat.png";
+import dogIcon from "./assets/images/avatar-icons/dog.png";
+import flowerIcon from "./assets/images/avatar-icons/flower.png";
+import guitarIcon from "./assets/images/avatar-icons/guitar.png";
+import headphonesIcon from "./assets/images/avatar-icons/headphones.png";
+import moonIcon from "./assets/images/avatar-icons/moon.png";
+import sunIcon from "./assets/images/avatar-icons/sun.png";
+import umbrellaIcon from "./assets/images/avatar-icons/umbrella.png";
 import CssBaseline from "@mui/material/CssBaseline";
 import { AppBar, Toolbar, Typography, Box, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
@@ -15,7 +24,7 @@ type LanguageContextType = {
 };
 export const LanguageContext = React.createContext<LanguageContextType>({ language: 'en', setLanguage: () => {} });
 
-function NavigationBar({ language, setLanguage }: { language: string, setLanguage: (lang: string) => void }) {
+function NavigationBar({ language, setLanguage, avatar }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null }) {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
@@ -64,7 +73,7 @@ function NavigationBar({ language, setLanguage }: { language: string, setLanguag
           </Box>
         </Box>
         {/* Right: Desktop - Language dropdown left of Sign Out; Mobile - only Sign Out */}
-        <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
+  <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
           {/* Desktop: Language dropdown */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <select
@@ -91,6 +100,27 @@ function NavigationBar({ language, setLanguage }: { language: string, setLanguag
           <Box>
             <SignOut />
           </Box>
+          {/* Avatar icon to the right of Sign Out */}
+          {avatar && (
+            <Box sx={{ ml: 1, display: 'flex', alignItems: 'center' }}>
+              <img
+                src={
+                  avatar === 'book' ? bookIcon :
+                  avatar === 'cat' ? catIcon :
+                  avatar === 'dog' ? dogIcon :
+                  avatar === 'flower' ? flowerIcon :
+                  avatar === 'guitar' ? guitarIcon :
+                  avatar === 'headphones' ? headphonesIcon :
+                  avatar === 'moon' ? moonIcon :
+                  avatar === 'sun' ? sunIcon :
+                  avatar === 'umbrella' ? umbrellaIcon :
+                  undefined
+                }
+                alt={avatar}
+                style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: '50%', background: '#fff', border: '2px solid #BE550F' }}
+              />
+            </Box>
+          )}
         </Box>
       </Toolbar>
       {/* Second Row: Language Switcher right (mobile only) */}
@@ -133,12 +163,38 @@ function NavigationBar({ language, setLanguage }: { language: string, setLanguag
   );
 }
 
+import { useState } from "react";
+import { fetchAuthSession } from "aws-amplify/auth";
+
 function App() {
   const [language, setLanguage] = React.useState('pt');
+  const [avatar, setAvatar] = useState<string | null>(null);
 
   React.useEffect(() => {
     document.title = language === 'pt' ? 'Sem Pressão' : 'No Pressure';
   }, [language]);
+
+  // Fetch avatar from userInfo in session storage (set by Home/Patient)
+  React.useEffect(() => {
+    async function getAvatar() {
+      try {
+        const session = await fetchAuthSession();
+        const payload = session.tokens?.idToken?.payload;
+        // Custom: avatar is stored in localStorage by Patient component after update
+        const localAvatar = localStorage.getItem('avatar');
+        if (localAvatar) {
+          setAvatar(localAvatar);
+        } else if (payload?.avatar) {
+          setAvatar(payload.avatar);
+        }
+      } catch {
+        setAvatar(null);
+      }
+    }
+    getAvatar();
+    window.addEventListener('storage', getAvatar);
+    return () => window.removeEventListener('storage', getAvatar);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -153,7 +209,7 @@ function App() {
             position: 'relative'
           }}>
             <CssBaseline />
-            <NavigationBar language={language} setLanguage={setLanguage} />
+            <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
             <Home />
           </Box>
         </BrowserRouter>

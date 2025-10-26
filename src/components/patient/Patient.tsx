@@ -71,6 +71,7 @@ const Patient = ({ userInfo }: PatientProps) => {
   const [gender, setGender] = useState<string>("female"); // Default to female
   const [isSmoker, setIsSmoker] = useState<boolean>(false); // Default to non-smoker
   const [exercisesDaily, setExercisesDaily] = useState<boolean>(false); // Default to no daily exercise
+  // ...existing code...
   
 
   const {
@@ -83,6 +84,33 @@ const Patient = ({ userInfo }: PatientProps) => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  // Listen for custom event to open edit dialog from header avatar
+  useEffect(() => {
+    const handleOpenEditDialog = () => {
+      if (existingPatient) {
+        setIsEditing(true);
+        setEditDialogOpen(true);
+        setSubmitMessage(null);
+        // Pre-populate the form with existing data
+        reset({
+          firstName: existingPatient.firstName,
+          lastName: existingPatient.lastName,
+          avatar: existingPatient.avatar || undefined,
+          dateOfBirth: existingPatient.dateOfBirth || undefined,
+          height: existingPatient.height || undefined,
+          weight: existingPatient.weight || undefined
+        });
+        setGender(existingPatient.gender || "female");
+        setIsSmoker(existingPatient.isSmoker || false);
+        setExercisesDaily(existingPatient.exercisesDaily || false);
+      }
+    };
+    window.addEventListener('openEditPatientDialog', handleOpenEditDialog);
+    return () => {
+      window.removeEventListener('openEditPatientDialog', handleOpenEditDialog);
+    };
+  }, [existingPatient, reset]);
 
   // For caret management in DOB field
   const dobInputRef = useRef<HTMLInputElement>(null);
@@ -127,16 +155,21 @@ const Patient = ({ userInfo }: PatientProps) => {
             setGender(patientData.gender || "female");
             setIsSmoker(patientData.isSmoker || false);
             setExercisesDaily(patientData.exercisesDaily || false);
-
+            // Store avatar in localStorage for header
+            if (patientData.avatar) {
+              localStorage.setItem('avatar', patientData.avatar);
+            } else {
+              localStorage.removeItem('avatar');
+            }
           } else {
             // Patient data is null
             setExistingPatient(null);
-
+            localStorage.removeItem('avatar');
           }
         } else {
           // No patient record found
           setExistingPatient(null);
-
+          localStorage.removeItem('avatar');
         }
       } catch (error) {
         console.error("Error checking for existing patient:", error);
@@ -245,14 +278,18 @@ const Patient = ({ userInfo }: PatientProps) => {
       if (response && response.data) {
         // Set the patient data and show success message
         setExistingPatient(response.data);
-        
+        // Store avatar in localStorage for header
+        if (response.data.avatar) {
+          localStorage.setItem('avatar', response.data.avatar);
+        } else {
+          localStorage.removeItem('avatar');
+        }
         // Update all state variables to match the updated data
         if (isEditing) {
           setGender(response.data.gender || "female");
           setIsSmoker(response.data.isSmoker || false);
           setExercisesDaily(response.data.exercisesDaily || false);
         }
-        
         setSubmitMessage({
           type: 'success',
           text: isEditing 
@@ -262,6 +299,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         setIsEditing(false); // Reset editing state
         reset(); // Clear the form
       } else {
+        localStorage.removeItem('avatar');
         throw new Error(isEditing ? 'Failed to update patient record' : 'Failed to create patient record');
       }
     } catch (error) {
