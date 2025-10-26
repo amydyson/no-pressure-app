@@ -1,3 +1,6 @@
+import ChatDrawer from "./components/ChatDrawer";
+import ChatIcon from "@mui/icons-material/Chat";
+import Fab from "@mui/material/Fab";
 import React from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import Home from "./components/common/Home";
@@ -75,8 +78,8 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
           >
             Explore
           </Button>
-          {/* Language Selector always visible in header */}
-          <Box>
+          {/* Language Selector hidden on mobile (xs), visible on md+ */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <select
               value={language}
               onChange={e => setLanguage(e.target.value)}
@@ -163,6 +166,14 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
 }
 
 function App() {
+  const [chatOpen, setChatOpen] = React.useState(false);
+
+  // Listen for custom event to open chat drawer (for menu integration)
+  React.useEffect(() => {
+    const openChat = () => setChatOpen(true);
+    window.addEventListener('openChatDrawer', openChat);
+    return () => window.removeEventListener('openChatDrawer', openChat);
+  }, []);
   const [language, setLanguage] = React.useState('en');
   const [avatar, setAvatar] = React.useState<string | null>(null);
 
@@ -209,6 +220,25 @@ function App() {
             <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
             {/* Main app content goes here, e.g. routes */}
             <Home />
+              {/* Floating Chat Button */}
+              <Fab
+                color="primary"
+                aria-label="Open chat"
+                onClick={() => setChatOpen(true)}
+                sx={{
+                  position: 'fixed',
+                  bottom: 24,
+                  right: 24,
+                  zIndex: 1300,
+                  bgcolor: '#BE550F',
+                  color: '#fff',
+                  boxShadow: 6,
+                  '&:hover': { bgcolor: '#a94409' }
+                }}
+              >
+                <ChatIcon />
+              </Fab>
+              <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} />
           </Box>
         </BrowserRouter>
       </LanguageContext.Provider>
