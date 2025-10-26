@@ -48,6 +48,7 @@ const BloodPressureReading = () => {
             fontWeight: 600,
             cursor: 'pointer'
           }}
+          onClick={() => navigate('/patient/how-to-get-a-reading')}
         >
           {language === 'pt' ? 'Como Obter uma Leitura' : 'How to Get a Reading'}
         </button>

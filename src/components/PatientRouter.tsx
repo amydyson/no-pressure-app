@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Patient from "./patient/Patient";
 import BloodPressureReading from "./patient/BloodPressureReading";
 import InputReading from "./patient/InputReading";
+import HowToGetAReading from "./patient/HowToGetAReading";
 
 interface PatientRouterProps {
   userInfo: {
@@ -24,6 +25,7 @@ const PatientRouter = ({ userInfo }: PatientRouterProps) => {
       } />
   <Route path="/blood-pressure" element={<BloodPressureReading />} />
   <Route path="/input-reading" element={<InputReading />} />
+  <Route path="/how-to-get-a-reading" element={<HowToGetAReading />} />
       <Route path="*" element={<Navigate to="/patient" replace />} />
     </Routes>
   );
