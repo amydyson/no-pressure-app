@@ -284,6 +284,8 @@ const Patient = ({ userInfo }: PatientProps) => {
         } else {
           localStorage.removeItem('avatar');
         }
+        // Dispatch event so header updates avatar immediately
+        window.dispatchEvent(new Event('storage'));
         // Update all state variables to match the updated data
         if (isEditing) {
           setGender(response.data.gender || "female");
@@ -293,8 +295,10 @@ const Patient = ({ userInfo }: PatientProps) => {
         setSubmitMessage({
           type: 'success',
           text: isEditing 
-            ? `Patient information updated successfully!`
-            : `Patient ${data.firstName} ${data.lastName} has been successfully added!`
+            ? (language === 'pt' ? 'Informações do paciente atualizadas com sucesso!' : 'Patient information updated successfully!')
+            : (language === 'pt' 
+                ? `Paciente ${data.firstName} ${data.lastName} foi adicionado com sucesso!`
+                : `Patient ${data.firstName} ${data.lastName} has been successfully added!`)
         });
         setIsEditing(false); // Reset editing state
         reset(); // Clear the form
