@@ -1,11 +1,12 @@
+import { useRef, useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
 import { TextField, FormHelperText, Box, Button, Alert, Typography, Paper, FormControl, FormLabel, ToggleButton, ToggleButtonGroup, Switch, FormControlLabel, MenuItem, Select, InputLabel } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../../amplify/data/resource";
-import { useState, useEffect, useContext } from "react";
+
 import { LanguageContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import manImage from "../../assets/images/illustrations/man.png";
@@ -66,6 +67,7 @@ const Patient = ({ userInfo }: PatientProps) => {
   const [existingPatient, setExistingPatient] = useState<Schema["Patient"]["type"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [gender, setGender] = useState<string>("female"); // Default to female
   const [isSmoker, setIsSmoker] = useState<boolean>(false); // Default to non-smoker
   const [exercisesDaily, setExercisesDaily] = useState<boolean>(false); // Default to no daily exercise
@@ -85,8 +87,7 @@ const Patient = ({ userInfo }: PatientProps) => {
   // For caret management in DOB field
   const dobInputRef = useRef<HTMLInputElement>(null);
 
-  // Debug validation errors
-  console.log("Current form validation errors:", errors);
+
 
 
 
@@ -111,7 +112,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           });
         } else {
           // No userId available, treat as new patient
-          console.log("No userId available, treating as new patient");
+
           setExistingPatient(null);
           setIsLoading(false);
           return;
@@ -126,22 +127,22 @@ const Patient = ({ userInfo }: PatientProps) => {
             setGender(patientData.gender || "female");
             setIsSmoker(patientData.isSmoker || false);
             setExercisesDaily(patientData.exercisesDaily || false);
-            console.log("Existing patient found:", patientData);
+
           } else {
             // Patient data is null
             setExistingPatient(null);
-            console.log("Patient data is null");
+
           }
         } else {
           // No patient record found
           setExistingPatient(null);
-          console.log("No existing patient record found");
+
         }
       } catch (error) {
         console.error("Error checking for existing patient:", error);
         
         // If there are corrupted records, we'll treat this as a new patient
-        console.log("Database may have corrupted records. Starting fresh for this user.");
+
         
         setExistingPatient(null);
         // Reset state variables to defaults on error
@@ -163,22 +164,18 @@ const Patient = ({ userInfo }: PatientProps) => {
   }, [userInfo?.userId]);
 
   const onSubmit = async (data: FormData) => {
-    console.log("=== onSubmit FUNCTION CALLED ===");
-    console.log("This means the form validation passed and submission started");
+
     
     setIsSubmitting(true);
     setSubmitMessage(null);
     
     try {
-      console.log("=== FORM SUBMISSION DEBUG ===");
-      console.log("Is editing:", isEditing);
-      console.log("Form data:", data);
-      console.log("Date of birth value:", data.dateOfBirth, "Type:", typeof data.dateOfBirth);
+
       // Date of birth is always a string from the form (YYYY-MM-DD), no conversion needed
       const processedDateOfBirth = data.dateOfBirth;
       if (processedDateOfBirth) {
         // Already in correct format
-        console.log("Processed date of birth:", processedDateOfBirth);
+
       }
       if (!userInfo?.userId) {
         console.warn('User ID not available, creating patient without userId');
@@ -203,20 +200,7 @@ const Patient = ({ userInfo }: PatientProps) => {
         if (existingRecords.data && existingRecords.data.length > 0) {
           const existingId = existingRecords.data[0].id;
           
-          console.log("=== UPDATE DEBUG INFO ===");
-          console.log("Updating patient with ID:", existingId);
-          console.log("Update data:", {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: userInfo?.email || undefined,
-            avatar: data.avatar || undefined,
-            gender: gender || undefined,
-            isSmoker: isSmoker !== undefined ? isSmoker : undefined,
-            dateOfBirth: processedDateOfBirth || undefined,
-            height: data.height || undefined,
-            weight: data.weight || undefined,
-            exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
-          });
+          // Update debug info removed
           
           response = await client.models.Patient.update({
             id: existingId,
@@ -233,7 +217,7 @@ const Patient = ({ userInfo }: PatientProps) => {
             exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
           });
           
-          console.log("Update response:", response);
+
         } else {
           throw new Error('Could not find existing patient record to update');
         }
@@ -253,8 +237,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           exercisesDaily: exercisesDaily !== undefined ? exercisesDaily : undefined,
         };
         
-        console.log("=== CREATE DEBUG INFO ===");
-        console.log("Creating new patient with data:", createData);
+
         
         response = await client.models.Patient.create(createData);
       }
@@ -594,7 +577,6 @@ const Patient = ({ userInfo }: PatientProps) => {
               setIsEditing(true); // Set editing mode
               setExistingPatient(null); // Show the form
               setSubmitMessage(null); // Clear success message
-              
               // Pre-populate the form with existing data
               reset({
                 firstName: existingPatient.firstName,
@@ -604,10 +586,10 @@ const Patient = ({ userInfo }: PatientProps) => {
                 height: existingPatient.height || undefined,
                 weight: existingPatient.weight || undefined
               });
-              // Set all state variables
               setGender(existingPatient.gender || "female");
               setIsSmoker(existingPatient.isSmoker || false);
               setExercisesDaily(existingPatient.exercisesDaily || false);
+              setEditDialogOpen(true); // Open modal
             }}
           >
             {language === 'pt' ? 'Editar Informações' : 'Edit Information'}
@@ -635,39 +617,33 @@ const Patient = ({ userInfo }: PatientProps) => {
     );
   }
 
-  // New patient form or edit form
-  return (
-    <Box sx={{ 
-      bgcolor: '#d7e9f7', 
-      minHeight: '100vh',
-      width: '100%',
-      pb: 4
-    }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Simple Form Layout - No Sections */}
-        <Box sx={{
-          width: "90vw",
-          maxWidth: "800px",
-          m: "0 auto",
-          p: 3
-        }}>
-          
-          {/* Form Title */}
-          <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#64748b' }}>
-            {isEditing
-              ? (language === 'pt' ? 'Edite suas informações de paciente' : 'Edit Your Patient Information')
-              : (language === 'pt' ? 'Crie seu perfil de paciente' : 'Create Your Patient Profile')}
-          </Typography>
-          
-          {/* Name Fields */}
-          <Box sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 2,
-            mb: 2,
-            alignItems: { xs: 'stretch', md: 'center' },
-          }}>
-            <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
+  // Show edit form in a modal dialog if editing, otherwise as a page
+  if (isEditing && editDialogOpen) {
+    return (
+      <Dialog open={editDialogOpen} onClose={() => { setEditDialogOpen(false); setIsEditing(false); }} maxWidth="md" fullWidth>
+        <DialogTitle>{language === 'pt' ? 'Editar Informações do Paciente' : 'Edit Patient Information'}</DialogTitle>
+        <DialogContent>
+          <Box sx={{ bgcolor: '#d7e9f7', width: '100%', pb: 4 }}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* Simple Form Layout - No Sections */}
+              <Box sx={{
+                width: "90vw",
+                maxWidth: "800px",
+                m: "0 auto",
+                p: 3
+              }}>
+                <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#64748b' }}>
+                  {language === 'pt' ? 'Edite suas informações de paciente' : 'Edit Your Patient Information'}
+                </Typography>
+                {/* Name Fields */}
+                <Box sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  gap: 2,
+                  mb: 2,
+                  alignItems: { xs: 'stretch', md: 'center' },
+                }}>
+                  <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
               <TextField
                 label={language === 'pt' ? 'Nome' : 'First Name'}
                 {...register("firstName")}
@@ -989,35 +965,31 @@ const Patient = ({ userInfo }: PatientProps) => {
           {isEditing && (
             <Button 
               variant="outlined" 
-              onClick={() => {
-                // Cancel editing - go back to patient info view
-                setIsEditing(false);
+              onClick={async () => {
                 setSubmitMessage(null);
-                // Re-query to get the existing patient data
-                const restorePatientData = async () => {
-                  if (userInfo?.userId) {
-                    try {
-                      const response = await client.models.Patient.list({
-                        filter: {
-                          userId: {
-                            eq: userInfo.userId
-                          }
+                // Restore patient data first, then close modal
+                if (userInfo?.userId) {
+                  try {
+                    const response = await client.models.Patient.list({
+                      filter: {
+                        userId: {
+                          eq: userInfo.userId
                         }
-                      });
-                      if (response.data && response.data.length > 0) {
-                        setExistingPatient(response.data[0]);
-                        // Restore all state variables
-                        setGender(response.data[0].gender || "female");
-                        setIsSmoker(response.data[0].isSmoker || false);
-                        setExercisesDaily(response.data[0].exercisesDaily || false);
                       }
-                    } catch (error) {
-                      console.error('Error restoring patient data:', error);
+                    });
+                    if (response.data && response.data.length > 0) {
+                      setExistingPatient(response.data[0]);
+                      setGender(response.data[0].gender || "female");
+                      setIsSmoker(response.data[0].isSmoker || false);
+                      setExercisesDaily(response.data[0].exercisesDaily || false);
                     }
+                  } catch (error) {
+                    console.error('Error restoring patient data:', error);
                   }
-                };
-                restorePatientData();
+                }
                 reset(); // Clear form
+                setIsEditing(false);
+                setEditDialogOpen(false);
               }}
               disabled={isSubmitting}
             >
@@ -1034,10 +1006,7 @@ const Patient = ({ userInfo }: PatientProps) => {
               minWidth: 140
             }}
             onClick={() => {
-              console.log("=== BUTTON CLICKED ===");
-              console.log("Button clicked, form should submit");
-              console.log("isSubmitting:", isSubmitting);
-              console.log("isEditing:", isEditing);
+
             }}
           >
             {isSubmitting 
@@ -1061,7 +1030,90 @@ const Patient = ({ userInfo }: PatientProps) => {
         )}
       </form>
     </Box>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  // Show as page for new patient
+  return (
+    <Box sx={{ 
+      bgcolor: '#d7e9f7', 
+      minHeight: '100vh',
+      width: '100%',
+      pb: 4
+    }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Simple Form Layout - No Sections */}
+        <Box sx={{
+          width: "90vw",
+          maxWidth: "800px",
+          m: "0 auto",
+          p: 3
+        }}>
+          <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#64748b' }}>
+            {language === 'pt' ? 'Crie seu perfil de paciente' : 'Create Your Patient Profile'}
+          </Typography>
+          {/* Name Fields */}
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            mb: 2,
+            alignItems: { xs: 'stretch', md: 'center' },
+          }}>
+            <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
+              {/* First Name Field */}
+              <TextField
+                label={language === 'pt' ? 'Nome' : 'First Name'}
+                {...register("firstName")}
+                error={!!errors.firstName}
+                margin="normal"
+                fullWidth
+                required
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
+              />
+              {errors.firstName && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.firstName.message}
+                </FormHelperText>
+              )}
+            </Box>
+            <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
+              {/* Last Name Field */}
+              <TextField
+                label={language === 'pt' ? 'Sobrenome' : 'Last Name'}
+                {...register("lastName")}
+                error={!!errors.lastName}
+                margin="normal"
+                fullWidth
+                required
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
+              />
+              {errors.lastName && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.lastName.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </form>
+    </Box>
   );
-};
+}
 
 export default Patient;
