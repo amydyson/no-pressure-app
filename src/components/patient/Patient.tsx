@@ -1113,7 +1113,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           <Typography variant="h5" textAlign="center" mb={3} sx={{ color: '#64748b' }}>
             {language === 'pt' ? 'Crie seu perfil de paciente' : 'Create Your Patient Profile'}
           </Typography>
-          {/* Name Fields */}
+          {/* Name, Avatar Fields */}
           <Box sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
@@ -1122,7 +1122,6 @@ const Patient = ({ userInfo }: PatientProps) => {
             alignItems: { xs: 'stretch', md: 'center' },
           }}>
             <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
-              {/* First Name Field */}
               <TextField
                 label={language === 'pt' ? 'Nome' : 'First Name'}
                 {...register("firstName")}
@@ -1146,7 +1145,6 @@ const Patient = ({ userInfo }: PatientProps) => {
               )}
             </Box>
             <Box sx={{ flex: { xs: 1, md: 10.5 } }}>
-              {/* Last Name Field */}
               <TextField
                 label={language === 'pt' ? 'Sobrenome' : 'Last Name'}
                 {...register("lastName")}
@@ -1169,7 +1167,299 @@ const Patient = ({ userInfo }: PatientProps) => {
                 </FormHelperText>
               )}
             </Box>
+            <Box sx={{
+              flex: 1,
+              minWidth: 180,
+              mt: { xs: 0, md: '12px' },
+              display: 'flex',
+              justifyContent: { xs: 'flex-start', md: 'flex-end' }
+            }}>
+              <FormControl>
+                <InputLabel sx={{ color: "#BE550F" }}>
+                  {language === 'pt' ? 'Avatar' : 'Avatar'}
+                </InputLabel>
+                <Select
+                  {...register("avatar")}
+                  value={watch("avatar") || ""}
+                  label={language === 'pt' ? 'Avatar' : 'Avatar'}
+                  sx={{
+                    minWidth: 0,
+                    top: '-2px',
+                    width: 'fit-content',
+                    height: 56,
+                    '& .MuiSelect-select': {
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      minWidth: 90,
+                      width: 'fit-content',
+                      px: 1,
+                      py: 0.5,
+                      height: 32,
+                    },
+                  }}
+                >
+                  <MenuItem value="">
+                    <em>{language === 'pt' ? 'Escolha seu avatar' : 'Choose your avatar'}</em>
+                  </MenuItem>
+                  <MenuItem value="book">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={bookIcon} alt="Book" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="cat">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={catIcon} alt={language === 'pt' ? 'Gato' : 'Cat'} style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="dog">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={dogIcon} alt="Dog" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="flower">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={flowerIcon} alt="Flower" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="guitar">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={guitarIcon} alt="Guitar" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="headphones">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={headphonesIcon} alt="Headphones" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="moon">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={moonIcon} alt="Moon" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="sun">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={sunIcon} alt="Sun" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                  <MenuItem value="umbrella">
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={umbrellaIcon} alt="Umbrella" style={{ width: 32, height: 32, objectFit: 'contain', aspectRatio: '1/1', display: 'block' }} />
+                    </Box>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
           </Box>
+
+          {/* Gender and Age Row */}
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            mb: 3
+          }}>
+            {/* Gender Selection */}
+            <Box sx={{ flex: 1 }}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend" sx={{ mb: 2, color: '#BE550F', textAlign: 'left', display: 'block' }}>
+                  {language === 'pt' ? 'Gênero' : 'Gender'}
+                </FormLabel>
+                <ToggleButtonGroup
+                  color="primary"
+                  value={gender}
+                  exclusive
+                  onChange={(_, newGender) => {
+                    if (newGender !== null) {
+                      setGender(newGender);
+                    }
+                  }}
+                  aria-label="gender selection"
+                  sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}
+                >
+                  <ToggleButton value="female" aria-label="female">
+                    {language === 'pt' ? 'Feminino' : 'Female'}
+                  </ToggleButton>
+                  <ToggleButton value="male" aria-label="male">
+                    {language === 'pt' ? 'Masculino' : 'Male'}
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </FormControl>
+            </Box>
+            {/* Date of Birth Field */}
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label={language === 'pt' ? 'Data de Nascimento' : 'Date of Birth'}
+                placeholder={language === 'pt' ? 'DD/MM/AAAA' : 'DD/MM/YYYY'}
+                type="text"
+                inputProps={{ inputMode: 'numeric', pattern: '[0-3][0-9]/[0-1][0-9]/[1-2][0-9]{3}', maxLength: 10 }}
+                value={watch("dateOfBirth") || ""}
+                inputRef={dobInputRef}
+                onChange={e => {
+                  const input = e.target;
+                  const caret = input.selectionStart || 0;
+                  let raw = input.value.replace(/[^0-9]/g, "");
+                  if (raw.length > 8) raw = raw.slice(0, 8);
+                  let formatted = raw;
+                  if (raw.length > 4) {
+                    formatted = raw.slice(0,2) + "/" + raw.slice(2,4) + "/" + raw.slice(4);
+                  } else if (raw.length > 2) {
+                    formatted = raw.slice(0,2) + "/" + raw.slice(2);
+                  }
+                  // Calculate new caret position
+                  let nextCaret = caret;
+                  const inputType = (e.nativeEvent as InputEvent).inputType || '';
+                  if (input.value[caret-1] === '/' && inputType === 'deleteContentBackward') {
+                    nextCaret = caret - 1;
+                  } else if (raw.length > 2 && caret === 3 && inputType !== 'deleteContentBackward') {
+                    nextCaret = caret + 1;
+                  } else if (raw.length > 4 && caret === 6 && inputType !== 'deleteContentBackward') {
+                    nextCaret = caret + 1;
+                  }
+                  setValue("dateOfBirth", formatted, { shouldValidate: true });
+                  setTimeout(() => {
+                    if (dobInputRef.current && document.activeElement === dobInputRef.current) {
+                      dobInputRef.current.setSelectionRange(nextCaret, nextCaret);
+                    }
+                  }, 0);
+                }}
+                error={!!errors.dateOfBirth}
+                margin="normal"
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
+              />
+              {errors.dateOfBirth && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.dateOfBirth.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+
+          {/* Height and Weight Row */}
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            mb: 3
+          }}>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label={language === 'pt' ? 'Altura (cm)' : 'Height (cm)'}
+                type="number"
+                {...register("height", { valueAsNumber: true })}
+                error={!!errors.height}
+                margin="normal"
+                fullWidth
+                inputProps={{ min: 0, step: 0.1 }}
+                helperText={language === 'pt' ? 'centímetros' : 'centimeters'}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
+              />
+              {errors.height && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.height.message}
+                </FormHelperText>
+              )}
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <TextField
+                label={language === 'pt' ? 'Peso (kg)' : 'Weight (kg)'}
+                type="number"
+                {...register("weight", { valueAsNumber: true })}
+                error={!!errors.weight}
+                margin="normal"
+                fullWidth
+                inputProps={{ min: 0, step: 0.1 }}
+                helperText={language === 'pt' ? 'quilogramas' : 'kilograms'}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: '#BE550F',
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: '#BE550F',
+                  }
+                }}
+              />
+              {errors.weight && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.weight.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+
+          {/* Lifestyle Switches */}
+          <Box sx={{ mb: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3, justifyContent: 'center' }}>
+            <FormControl component="fieldset">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={isSmoker}
+                    onChange={(e) => setIsSmoker(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label={language === 'pt' ? 'Eu sou fumante' : 'I am a smoker'}
+              />
+            </FormControl>
+
+            <FormControl component="fieldset">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={exercisesDaily}
+                    onChange={(e) => setExercisesDaily(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label={language === 'pt' ? 'Eu me exercito 30+ minutos diariamente' : 'I exercise 30+ minutes daily'}
+              />
+            </FormControl>
+          </Box>
+
+          {/* Submit Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+            <Button 
+              type="submit" 
+              variant="contained" 
+              color="primary"
+              disabled={isSubmitting}
+              sx={{ 
+                minWidth: 140
+              }}
+            >
+              {isSubmitting 
+                ? (language === 'pt' ? 'Enviando...' : 'Submitting...')
+                : (language === 'pt' ? 'Adicionar Paciente' : 'Add Patient')
+              }
+            </Button>
+          </Box>
+
+          {/* Feedback Messages */}
+          {submitMessage && (
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+              <Alert severity={submitMessage.type} sx={{ maxWidth: 600 }}>
+                {submitMessage.text}
+              </Alert>
+            </Box>
+          )}
         </Box>
       </form>
     </Box>
