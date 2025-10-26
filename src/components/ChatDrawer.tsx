@@ -16,11 +16,33 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState("");
 
+  const medicalKeywords = [
+    'blood pressure', 'hypertension', 'hypotension', 'systolic', 'diastolic',
+    'heart rate', 'pulse', 'cardiovascular', 'bp', 'mmhg', 'tachycardia', 'bradycardia',
+    'arrhythmia', 'artery', 'vein', 'stroke', 'heart attack', 'cholesterol', 'atherosclerosis',
+    'angioplasty', 'stent', 'atrial', 'ventricle', 'valve', 'myocardial', 'cardiac', 'circulation'
+  ];
+
   const handleSend = async () => {
     if (!input.trim()) return;
     setMessages(msgs => [...msgs, { sender: "You", text: input }]);
-    setLoading(true);
     setInput("");
+
+    // Check for medical keywords (case-insensitive)
+    const inputLower = input.toLowerCase();
+    const hasMedicalKeyword = medicalKeywords.some(kw => inputLower.includes(kw));
+    if (!hasMedicalKeyword) {
+      setMessages(msgs => [
+        ...msgs,
+        {
+          sender: "AI",
+          text: "This assistant is focused on blood pressure and cardiovascular health. Please focus your question."
+        }
+      ]);
+      return;
+    }
+
+    setLoading(true);
     if (!apiKey) {
       setShowApiKeyDialog(true);
       setLoading(false);
