@@ -1,7 +1,7 @@
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
-import { LanguageContext } from "../../App";
+import LanguageContext from "../../LanguageContext";
 
 const SignOut = () => {
   const { signOut } = useAuthenticator();

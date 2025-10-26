@@ -15,14 +15,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { AppBar, Toolbar, Typography, Box, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
-
-// Navigation Bar component that can use useNavigate
-// Create a context for language
-type LanguageContextType = {
-  language: string;
-  setLanguage: (lang: string) => void;
-};
-export const LanguageContext = React.createContext<LanguageContextType>({ language: 'en', setLanguage: () => {} });
+import LanguageContext from "./LanguageContext";
 
 function NavigationBar({ language, setLanguage, avatar }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null }) {
   const navigate = useNavigate();
@@ -184,8 +177,10 @@ function App() {
         const localAvatar = localStorage.getItem('avatar');
         if (localAvatar) {
           setAvatar(localAvatar);
-        } else if (payload?.avatar) {
+        } else if (typeof payload?.avatar === 'string') {
           setAvatar(payload.avatar);
+        } else {
+          setAvatar(null);
         }
       } catch {
         setAvatar(null);

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../../amplify/data/resource";
 
-import { LanguageContext } from "../../App";
+import LanguageContext from "../../LanguageContext";
 import { useNavigate } from "react-router-dom";
 import manImage from "../../assets/images/illustrations/man.png";
 import womanImage from "../../assets/images/illustrations/woman.png";
@@ -658,8 +658,8 @@ const Patient = ({ userInfo }: PatientProps) => {
               }
             }}
             onClick={() => {
-              // Navigate to medical history page
-              navigate('/patient/medical-history');
+              // Navigate to blood pressure reading page
+              navigate('/patient/blood-pressure');
             }}
           >
             {language === 'pt' ? 'Próximo →' : 'Next →'}
