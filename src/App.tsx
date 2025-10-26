@@ -15,15 +15,16 @@ import moonIcon from "./assets/images/avatar-icons/moon.png";
 import sunIcon from "./assets/images/avatar-icons/sun.png";
 import umbrellaIcon from "./assets/images/avatar-icons/umbrella.png";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Toolbar, Typography, Box, ThemeProvider, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, ThemeProvider, Button, Menu, MenuItem } from "@mui/material";
 import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
 import LanguageContext from "./LanguageContext";
 
-function NavigationBar({ language, setLanguage, avatar }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null }) {
+function NavigationBar({ language, setLanguage, avatar, openChatDrawer }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null, openChatDrawer: () => void }) {
   const navigate = useNavigate();
 
-  // Explore dropdown no longer uses anchor/menu logic
+  // Explore dropdown state and handlers
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleLogoClick = () => {
     navigate('/');
@@ -73,11 +74,34 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
         <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
           <Button
             id="explore-button"
-            onClick={() => navigate('/patient/blood-pressure')}
+            aria-controls={anchorEl ? 'explore-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={anchorEl ? 'true' : undefined}
+            onClick={e => setAnchorEl(e.currentTarget)}
             sx={{ color: '#fff', fontWeight: 600, ml: 2 }}
           >
             Explore
           </Button>
+          <Menu
+            id="explore-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+            MenuListProps={{ 'aria-labelledby': 'explore-button' }}
+            PaperProps={{
+              sx: {
+                border: '2px solid #BE550F',
+                boxShadow: 3
+              }
+            }}
+          >
+            <MenuItem onClick={() => { navigate('/patient/input-reading'); setAnchorEl(null); }}>
+              Input a Reading
+            </MenuItem>
+            <MenuItem onClick={() => { openChatDrawer(); setAnchorEl(null); }}>
+              Chat
+            </MenuItem>
+          </Menu>
           {/* Language Selector hidden on mobile (xs), visible on md+ */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <select
@@ -217,7 +241,7 @@ function App() {
             position: 'relative'
           }}>
             <CssBaseline />
-            <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
+            <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} openChatDrawer={() => setChatOpen(true)} />
             {/* Main app content goes here, e.g. routes */}
             <Home />
               {/* Floating Chat Button */}
