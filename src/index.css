@@ -1,5 +1,26 @@
-body {
   background-color:  rgb(227, 242, 253) !important;
+}
+
+
+
+
+
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  background-color:  rgb(227, 242, 253) !important;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 

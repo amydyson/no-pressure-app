@@ -147,7 +147,9 @@ function App() {
           <Box sx={{ 
             bgcolor: '#d7e9f7', 
             minHeight: '100vh',
-            width: '100%',
+            width: '100vw',
+            maxWidth: '100vw',
+            overflowX: 'hidden',
             position: 'relative'
           }}>
             <CssBaseline />

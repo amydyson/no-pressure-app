@@ -300,13 +300,15 @@ const Patient = ({ userInfo }: PatientProps) => {
     return (
       <Paper 
         sx={{
-          px: 4,
-          py: 2,
+          px: { xs: 1, sm: 2, md: 4 },
+          py: { xs: 1, sm: 2 },
           mx: 'auto',
           textAlign: 'center',
           bgcolor: '#d7e9f7',
           borderRadius: 2,
-          width: '100%'
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'clip',
         }}
       >
         {/* Success message if just created */}
@@ -326,9 +328,12 @@ const Patient = ({ userInfo }: PatientProps) => {
         <Box sx={{ 
           display: 'flex', 
           flexDirection: { xs: 'column', md: 'row' }, 
-          gap: 2, 
+          gap: { xs: 0, sm: 2 }, 
           mt: 4,
-          alignItems: { xs: 'center', md: 'flex-start' }
+          alignItems: { xs: 'center', md: 'flex-start' },
+          width: '100%',
+          maxWidth: '100%',
+          minWidth: 0,
         }}>
           
           {/* Left - Gender Illustrations */}
@@ -337,38 +342,43 @@ const Patient = ({ userInfo }: PatientProps) => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
-            px: 4,
-            py: 2,
-            minHeight: '350px',
-            justifyContent: 'center'
+            px: { xs: 0, sm: 2, md: 4 },
+            py: { xs: 1, sm: 2 },
+            minHeight: { xs: 'auto', md: '350px' },
+            justifyContent: 'center',
+            width: '100%',
+            maxWidth: { xs: '100%', md: 520 },
+            minWidth: 0,
           }}>
             {/* Gender Illustrations */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0, mb: 1 }}>
-              <Box sx={{ textAlign: 'center', marginRight: '-50px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0, mb: 1, width: '100%', maxWidth: 400, minWidth: 0 }}>
+              <Box sx={{ textAlign: 'center', width: { xs: '50%', md: 'auto' }, minWidth: 0 }}>
                 <img 
                   src={manImage}
                   alt="man illustration"
                   style={{ 
-                    width: '250px', 
-                    height: '250px', 
+                    width: '100%', 
+                    maxWidth: 160, 
+                    height: 'auto', 
                     objectFit: 'contain',
                     border: 'none',
                     opacity: 1,
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'transparent',
                   }}
                 />
               </Box>
-              <Box sx={{ textAlign: 'center', marginLeft: '-50px' }}>
+              <Box sx={{ textAlign: 'center', width: { xs: '50%', md: 'auto' }, minWidth: 0 }}>
                 <img 
                   src={womanImage}
                   alt="woman illustration"
                   style={{ 
-                    width: '250px', 
-                    height: '250px', 
+                    width: '100%', 
+                    maxWidth: 160, 
+                    height: 'auto', 
                     objectFit: 'contain',
                     border: 'none',
                     opacity: 1,
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'transparent',
                   }}
                 />
               </Box>
@@ -378,21 +388,25 @@ const Patient = ({ userInfo }: PatientProps) => {
           {/* Right - Patient Details in Two Columns */}
           <Box sx={{ 
             flex: { xs: 'none', md: 2 }, 
-             border: { xs: '1px solid #BE550F', md: 'none' },
-            px: 4,
-            py: 2,
+            border: { xs: '1px solid #BE550F', md: 'none' },
+            px: { xs: 1, sm: 2, md: 4 },
+            py: { xs: 1, sm: 2 },
             width: '100%',
+            maxWidth: { xs: '100%', md: 700 },
             display: 'flex',
             flexDirection: 'column',
-            alignItems: { xs: 'center', md: 'stretch' }
+            alignItems: { xs: 'center', md: 'stretch' },
+            minWidth: 0,
           }}>
             {/* Two Column Grid for Information */}
             <Box sx={{ 
               display: 'grid', 
-              gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr' }, 
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, 
               gap: 3,
               textAlign: 'left',
-              maxWidth: { xs: '500px', md: 'none' },
+              maxWidth: { xs: '100%', sm: 500, md: 'none' },
+              width: '100%',
+              minWidth: 0,
             }}>
               
               {/* First Row - Names Side by Side */}
