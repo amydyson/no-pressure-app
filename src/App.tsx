@@ -12,7 +12,7 @@ import moonIcon from "./assets/images/avatar-icons/moon.png";
 import sunIcon from "./assets/images/avatar-icons/sun.png";
 import umbrellaIcon from "./assets/images/avatar-icons/umbrella.png";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Toolbar, Typography, Box, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, ThemeProvider, Button } from "@mui/material";
 import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
 import LanguageContext from "./LanguageContext";
@@ -20,12 +20,15 @@ import LanguageContext from "./LanguageContext";
 function NavigationBar({ language, setLanguage, avatar }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null }) {
   const navigate = useNavigate();
 
+  // Explore dropdown no longer uses anchor/menu logic
+
   const handleLogoClick = () => {
     navigate('/');
   };
 
   // Header text translations
   const headerText = language === 'pt' ? { top: 'SEM', bottom: 'PRESSÃO' } : { top: 'NO', bottom: 'PRESSURE' };
+
 
   return (
     <AppBar position="sticky" sx={{ mb: 0, bgcolor: '#2F4F4F', color: '#FFFFFF' }}>
@@ -41,7 +44,6 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
           py: { xs: 0.5, md: 0 },
         }}
       >
-        {/* Left: Logo and Title */}
         <Box
           sx={{
             display: 'flex',
@@ -65,10 +67,16 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
             </Typography>
           </Box>
         </Box>
-        {/* Right: Desktop - Language dropdown left of Sign Out; Mobile - only Sign Out */}
-  <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
-          {/* Desktop: Language dropdown */}
-          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
+          <Button
+            id="explore-button"
+            onClick={() => navigate('/patient/blood-pressure')}
+            sx={{ color: '#fff', fontWeight: 600, ml: 2 }}
+          >
+            Explore
+          </Button>
+          {/* Language Selector always visible in header */}
+          <Box>
             <select
               value={language}
               onChange={e => setLanguage(e.target.value)}
@@ -93,7 +101,6 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
           <Box>
             <SignOut />
           </Box>
-          {/* Avatar icon to the right of Sign Out */}
           {avatar && (
             <Box sx={{ ml: 1, display: 'flex', alignItems: 'center' }}>
               <img
@@ -116,7 +123,6 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
           )}
         </Box>
       </Toolbar>
-      {/* Second Row: Language Switcher right (mobile only) */}
       <Toolbar
         sx={{
           display: { xs: 'flex', md: 'none' },
@@ -126,7 +132,7 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
           minHeight: 36,
           bgcolor: '#2F4F4F',
           px: 1,
-          pb: { xs: 2, md: 0 }, // Add padding below on mobile
+          pb: { xs: 2, md: 0 },
         }}
       >
         <Box>
@@ -156,12 +162,9 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
   );
 }
 
-import { useState } from "react";
-import { fetchAuthSession } from "aws-amplify/auth";
-
 function App() {
-  const [language, setLanguage] = React.useState('pt');
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [language, setLanguage] = React.useState('en');
+  const [avatar, setAvatar] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     document.title = language === 'pt' ? 'Sem Pressão' : 'No Pressure';
@@ -171,14 +174,13 @@ function App() {
   React.useEffect(() => {
     async function getAvatar() {
       try {
-        const session = await fetchAuthSession();
-        const payload = session.tokens?.idToken?.payload;
+        // If you use Amplify Auth, replace this with your session fetch logic
+        // const session = await fetchAuthSession();
+        // const payload = session.tokens?.idToken?.payload;
         // Custom: avatar is stored in localStorage by Patient component after update
         const localAvatar = localStorage.getItem('avatar');
         if (localAvatar) {
           setAvatar(localAvatar);
-        } else if (typeof payload?.avatar === 'string') {
-          setAvatar(payload.avatar);
         } else {
           setAvatar(null);
         }
@@ -205,6 +207,7 @@ function App() {
           }}>
             <CssBaseline />
             <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
+            {/* Main app content goes here, e.g. routes */}
             <Home />
           </Box>
         </BrowserRouter>
