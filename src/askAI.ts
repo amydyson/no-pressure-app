@@ -1,18 +1,18 @@
-// Utility to call Hugging Face Inference API for Q&A/chat
-// Usage: import { askAI } from './askAI';
-// await askAI('What is high blood pressure?', 'YOUR_HF_API_KEY');
 
 /**
- * Ask a question to the Hugging Face Inference API (google/flan-t5-base)
+ * Ask a question to the Hugging Face Inference Providers API (meta-llama/Llama-3.1-8B-Instruct)
  * @param question The user's question (string)
  * @param apiKey Your Hugging Face API key (string)
  * @returns The AI's answer (string)
  */
 export async function askAI(question: string, apiKey: string): Promise<string> {
-  // Q&A model expects { question, context }
-  const endpoint = 'https://api-inference.huggingface.co/models/deepset/roberta-base-squad2';
-  // For demo, use a fixed context. In production, you would use a real medical context or FAQ.
-  const context = `Blood pressure is the pressure of circulating blood on the walls of blood vessels. High blood pressure (hypertension) increases the risk of heart disease and stroke. Normal blood pressure is below 120/80 mmHg.`;
+  const endpoint = 'https://router.huggingface.co/v1/chat/completions';
+  const model = 'meta-llama/Llama-3.1-8B-Instruct';
+  const systemPrompt = 'You are a helpful health assistant. Answer the following question about blood pressure.';
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: question }
+  ];
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -20,7 +20,7 @@ export async function askAI(question: string, apiKey: string): Promise<string> {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ inputs: { question, context } }),
+      body: JSON.stringify({ model, messages }),
     });
     const data = await response.json();
     // Debug: log the full response
@@ -31,9 +31,9 @@ export async function askAI(question: string, apiKey: string): Promise<string> {
       }
       return 'AI API error (non-200 response)';
     }
-    // The model returns { answer, score, ... }
-    if (data.answer) {
-      return data.answer.trim();
+    // The model returns a choices array with message content
+    if (data.choices && data.choices[0]?.message?.content) {
+      return data.choices[0].message.content.trim();
     }
     return 'Sorry, I could not answer that.';
   } catch (err) {
