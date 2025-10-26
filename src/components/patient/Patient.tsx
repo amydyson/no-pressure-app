@@ -300,6 +300,10 @@ const Patient = ({ userInfo }: PatientProps) => {
                 ? `Paciente ${data.firstName} ${data.lastName} foi adicionado com sucesso!`
                 : `Patient ${data.firstName} ${data.lastName} has been successfully added!`)
         });
+        // Hide the success banner after 30 seconds
+        setTimeout(() => {
+          setSubmitMessage(current => current && current.type === 'success' ? null : current);
+        }, 30000);
         setIsEditing(false); // Reset editing state
         reset(); // Clear the form
       } else {
