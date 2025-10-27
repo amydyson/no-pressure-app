@@ -13,10 +13,12 @@ import moonIcon from "./assets/images/avatar-icons/moon.png";
 import sunIcon from "./assets/images/avatar-icons/sun.png";
 import umbrellaIcon from "./assets/images/avatar-icons/umbrella.png";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Toolbar, Typography, Box, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, ThemeProvider, Fab } from "@mui/material";
 import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
 import LanguageContext from "./LanguageContext";
+import ChatDrawer from './components/ChatDrawer';
+import ChatIcon from '@mui/icons-material/Chat';
 
 function NavigationBar({ language, setLanguage, avatar }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null }) {
   const navigate = useNavigate();
@@ -163,6 +165,7 @@ import { fetchAuthSession } from "aws-amplify/auth";
 function App() {
   const [language, setLanguage] = React.useState('pt');
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = React.useState(false);
 
   React.useEffect(() => {
     document.title = language === 'pt' ? 'Sem Pressão' : 'No Pressure';
@@ -207,6 +210,28 @@ function App() {
             <CssBaseline />
             <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
             <Home />
+            {/* Floating Chat Button */}
+            {!chatOpen && (
+              <Fab
+                color="primary"
+                aria-label="Open chat"
+                onClick={() => setChatOpen(true)}
+                sx={{
+                  position: 'fixed',
+                  bottom: 24,
+                  right: 24,
+                  zIndex: 1300,
+                  bgcolor: '#BE550F',
+                  color: '#fff',
+                  boxShadow: 6,
+                  '&:hover': { bgcolor: '#F4c430', color: '#2F4F4F' }
+                }}
+              >
+                <ChatIcon />
+              </Fab>
+            )}
+            {/* Chat Drawer */}
+            <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} />
           </Box>
         </BrowserRouter>
       </LanguageContext.Provider>
