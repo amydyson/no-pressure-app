@@ -1,5 +1,6 @@
 
 import { Box, Typography } from "@mui/material";
+import './BloodPressureReading.css';
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import LanguageContext from "../../LanguageContext";
@@ -20,34 +21,13 @@ const BloodPressureReading = () => {
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2, width: '100%', maxWidth: 320 }}>
         <button
-          style={{
-            padding: '12px 0',
-            width: '100%',
-            background: '#BE550F',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            marginBottom: 8
-          }}
+          className="input-reading-btn"
           onClick={() => navigate('/patient/input-reading')}
         >
           {language === 'pt' ? 'Inserir Leitura' : 'Input Reading'}
         </button>
         <button
-          style={{
-            padding: '12px 0',
-            width: '100%',
-            background: '#fff',
-            color: '#BE550F',
-            border: '2px solid #BE550F',
-            borderRadius: 6,
-            fontSize: '1.1rem',
-            fontWeight: 600,
-            cursor: 'pointer'
-          }}
+          className="how-to-reading-btn"
           onClick={() => navigate('/patient/how-to-get-a-reading')}
         >
           {language === 'pt' ? 'Como Obter uma Leitura' : 'How to Get a Reading'}

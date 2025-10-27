@@ -1,4 +1,5 @@
 import React from "react";
+import './global-buttons.css';
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import Home from "./components/common/Home";
 import SignOut from "./components/common/SignOut";

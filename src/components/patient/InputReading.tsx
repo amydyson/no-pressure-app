@@ -1,4 +1,5 @@
 import { Box, Typography, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import './InputReading.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useContext } from "react";
 import LanguageContext from "../../LanguageContext";
@@ -19,18 +20,7 @@ const InputReading = () => {
           {language === 'pt' ? 'Diastólica (mmHg):' : 'Diastolic (mmHg):'}
           <input type="number" name="diastolic" min="30" max="150" required style={{ width: '100%', padding: 8, marginTop: 4, borderRadius: 4, border: '1px solid #ccc', fontSize: '1rem' }} />
         </label>
-        <button type="submit" style={{
-          padding: '12px 0',
-          width: '100%',
-          background: '#BE550F',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 6,
-          fontSize: '1.1rem',
-          fontWeight: 600,
-          cursor: 'pointer',
-          marginTop: 12
-        }}>
+        <button type="submit" className="submit-reading-btn">
           {language === 'pt' ? 'Enviar Leitura' : 'Submit Reading'}
         </button>
       </Box>

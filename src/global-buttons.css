@@ -1,0 +1,19 @@
+button, .input-reading-btn, .how-to-reading-btn, .submit-reading-btn {
+  padding: 12px 0;
+  width: 100%;
+  background: #BE550F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+button:hover, .input-reading-btn:hover, .how-to-reading-btn:hover, .submit-reading-btn:hover {
+  background: #F4c430;
+  color: #2F4F4F;
+}

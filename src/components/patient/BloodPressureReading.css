@@ -1,0 +1,35 @@
+.how-to-reading-btn {
+  padding: 12px 0;
+  width: 100%;
+  background: #BE550F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.how-to-reading-btn:hover {
+  background: #F4c430;
+  color: #2F4F4F;
+}
+.input-reading-btn {
+  padding: 12px 0;
+  width: 100%;
+  background: #BE550F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+.input-reading-btn:hover {
+  background: #F4c430;
+  color: #2F4F4F;
+}

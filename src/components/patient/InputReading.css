@@ -1,0 +1,18 @@
+.submit-reading-btn {
+  padding: 12px 0;
+  width: 100%;
+  background: #BE550F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background 0.2s;
+}
+
+.submit-reading-btn:hover {
+  background: #F4c430;
+  color: #2F4F4F;
+}

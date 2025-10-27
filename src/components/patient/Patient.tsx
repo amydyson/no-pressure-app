@@ -661,8 +661,10 @@ const Patient = ({ userInfo }: PatientProps) => {
             sx={{ 
               bgcolor: '#BE550F',
               color: '#FFFFFF',
+              transition: 'background 0.2s',
               '&:hover': {
-                bgcolor: '#9A4409'
+                bgcolor: '#F4c430',
+                color: '#2F4F4F'
               }
             }}
             onClick={() => {
@@ -1063,7 +1065,12 @@ const Patient = ({ userInfo }: PatientProps) => {
             color="primary"
             disabled={isSubmitting}
             sx={{ 
-              minWidth: 140
+              minWidth: 140,
+              transition: 'background 0.2s',
+              '&:hover': {
+                bgcolor: '#F4c430',
+                color: '#2F4F4F'
+              }
             }}
             onClick={() => {
 
