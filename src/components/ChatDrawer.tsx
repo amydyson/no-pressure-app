@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Drawer, IconButton, Box, Typography, TextField, Button, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
+import React, { useState, useContext, useRef, useEffect } from "react";
+import { Drawer, Box, Typography, TextField, Button, List, ListItem, ListItemText, CircularProgress, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import LanguageContext from "../LanguageContext";
 
@@ -13,6 +13,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -25,19 +26,27 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
     }, 1000);
   };
 
+  useEffect(() => {
+    if (open && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, open]);
+
   return (
     <Drawer
       anchor="right"
       open={open}
       onClose={onClose}
-      PaperProps={{ sx: { width: { xs: 320, sm: 400 }, p: 0, bgcolor: '#f7fafc' } }}
+      PaperProps={{ sx: { width: { xs: '100vw', sm: 400, md: 420 }, boxShadow: 3, borderTopLeftRadius: 12, borderBottomLeftRadius: 12, bgcolor: '#f9f9f9', overflowX: 'hidden' } }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <Box sx={{ p: 2, bgcolor: '#BE550F', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="h6">{language === 'pt' ? 'Conversa' : 'Chat'}</Typography>
-          <IconButton onClick={onClose} sx={{ color: '#fff' }}>
-            <CloseIcon />
-          </IconButton>
+        <Box sx={{ p: 2, bgcolor: '#BE550F', color: '#fff', display: 'flex', alignItems: 'center' }}>
+          <Typography variant="h6" sx={{ flex: 1, textAlign: 'left' }}>{language === 'pt' ? 'Conversa' : 'Chat'}</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', p: 0, m: 0, width: 40, height: 40, position: 'relative' }}>
+            <IconButton aria-label="close" onClick={onClose} size="large" sx={{ color: '#888', width: 40, height: 40, m: 0, p: 0, position: 'absolute', top: 0, right: 0 }}>
+              <CloseIcon fontSize="large" />
+            </IconButton>
+          </Box>
         </Box>
         <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
           <List>
@@ -56,22 +65,29 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
               </ListItem>
             )}
           </List>
+          <Box ref={messagesEndRef} />
         </Box>
-        <Box sx={{ p: 2, borderTop: '1px solid #eee', display: 'flex', gap: 1 }}>
+        <Box sx={{ p: 2, borderTop: '1px solid #eee', display: 'flex', flexDirection: 'column', gap: 1 }}>
           <TextField
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
-            placeholder={language === 'pt' ? 'Digite sua mensagem...' : 'Type your message...'}
+            placeholder={language === 'pt' ? 'Faça uma pergunta sobre pressão arterial' : 'Ask a question about blood pressure'}
             fullWidth
-            size="small"
-            sx={{ bgcolor: '#fff', borderRadius: 1 }}
+            size="medium"
+            multiline
+            minRows={2}
+            maxRows={6}
+            sx={{ bgcolor: '#fff', borderRadius: 1, fontSize: '1.25rem', fontWeight: 700, color: '#1a1a1a', letterSpacing: '0.03em' }}
+            InputProps={{ style: { fontWeight: 700, fontSize: '1.25rem', color: '#1a1a1a', letterSpacing: '0.03em' } }}
+            inputProps={{ style: { fontWeight: 700, fontSize: '1.25rem', color: '#1a1a1a', letterSpacing: '0.03em' } }}
           />
           <Button
             variant="contained"
-            sx={{ bgcolor: '#BE550F', '&:hover': { bgcolor: '#9A4409' } }}
+            sx={{ bgcolor: '#BE550F', '&:hover': { bgcolor: '#9A4409' }, minWidth: 36, height: 44, px: 1.5, fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.05em', mt: 1 }}
             onClick={handleSend}
             disabled={!input.trim() || loading}
+            fullWidth
           >
             {language === 'pt' ? 'Enviar' : 'Send'}
           </Button>
