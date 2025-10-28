@@ -2,10 +2,10 @@ import React, { useState, useContext, useRef, useEffect } from "react";
 import { Drawer, Box, Typography, TextField, Button, List, ListItem, ListItemText, CircularProgress, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import LanguageContext from "../../LanguageContext";
-// import { generateClient } from "aws-amplify/data";
-// import type { Schema } from "../../../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../../../amplify/data/resource";
 
-// const client = generateClient<Schema>();
+const client = generateClient<Schema>();
 
 interface ChatDrawerProps {
   open: boolean;
@@ -17,48 +17,38 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
     
-    const userMessage = input.toLowerCase();
-    setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'Você' : 'You', text: input }]);
+    const userMessage = input;
+    setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'Você' : 'You', text: userMessage }]);
     setInput("");
     setLoading(true);
 
-    setTimeout(() => {
-      let response = '';
+    try {
+      const response = await client.conversations.chat.sendMessage({
+        conversationId,
+        content: [{ text: userMessage }]
+      });
       
-      if (userMessage.includes('systolic') || userMessage.includes('sistólica')) {
-        response = language === 'pt' 
-          ? 'A pressão sistólica é o número superior na sua leitura de pressão arterial. Representa a pressão quando seu coração bate e bombeia sangue. Valores normais ficam abaixo de 120 mmHg.' 
-          : 'Systolic pressure is the top number in your blood pressure reading. It represents the pressure when your heart beats and pumps blood. Normal values are below 120 mmHg.';
-      } else if (userMessage.includes('diastolic') || userMessage.includes('diastólica')) {
-        response = language === 'pt'
-          ? 'A pressão diastólica é o número inferior. Representa a pressão quando seu coração relaxa entre as batidas. Valores normais ficam abaixo de 80 mmHg.'
-          : 'Diastolic pressure is the bottom number. It represents the pressure when your heart relaxes between beats. Normal values are below 80 mmHg.';
-      } else if (userMessage.includes('exercise') || userMessage.includes('exercício')) {
-        response = language === 'pt'
-          ? 'Exercícios regulares são ótimos para a pressão arterial! Caminhadas de 30 minutos, natação ou ciclismo podem reduzir a pressão em 4-9 mmHg. Comece devagar e aumente gradualmente.'
-          : 'Regular exercise is great for blood pressure! 30-minute walks, swimming, or cycling can lower pressure by 4-9 mmHg. Start slowly and gradually increase.';
-      } else {
-        const responses = language === 'pt' ? [
-          'Que pergunta interessante! A pressão arterial é influenciada por muitos fatores como dieta, exercícios e estresse.',
-          'Boa pergunta! Manter um peso saudável e reduzir o sódio podem ajudar muito com a pressão arterial.',
-          'Interessante! O estresse pode aumentar temporariamente a pressão. Técnicas de relaxamento como meditação podem ajudar.'
-        ] : [
-          'Great question! Blood pressure is influenced by many factors like diet, exercise, and stress levels.',
-          'Good question! Maintaining a healthy weight and reducing sodium can really help with blood pressure.',
-          'Interesting! Stress can temporarily raise blood pressure. Relaxation techniques like meditation can help.'
-        ];
-        response = responses[Math.floor(Math.random() * responses.length)];
+      if (!conversationId) {
+        setConversationId(response.conversationId);
       }
       
-      setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: response }]);
+      const aiResponse = response.content?.[0]?.text || (language === 'pt' ? 'Desculpe, não consegui processar sua mensagem.' : 'Sorry, I could not process your message.');
+      setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: aiResponse }]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages(msgs => [...msgs, { 
+        sender: language === 'pt' ? 'IA' : 'AI', 
+        text: language === 'pt' ? 'Desculpe, ocorreu um erro. Tente novamente.' : 'Sorry, an error occurred. Please try again.' 
+      }]);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   useEffect(() => {
