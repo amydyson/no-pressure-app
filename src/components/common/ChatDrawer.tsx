@@ -20,6 +20,13 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  const sendMessage = async (message: string) => {
+    return await (client as any).conversations.chat.sendMessage({
+      conversationId,
+      content: [{ text: message }]
+    });
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
     
@@ -31,10 +38,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
     try {
       // Check if conversation API is available
       if ((client as any).conversations?.chat?.sendMessage) {
-        const response = await (client as any).conversations.chat.sendMessage({
-          conversationId,
-          content: [{ text: userMessage }]
-        });
+        const response = await sendMessage(userMessage);
         
         if (!conversationId) {
           setConversationId(response.conversationId);
