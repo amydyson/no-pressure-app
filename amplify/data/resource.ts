@@ -7,6 +7,11 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  chat: a.conversation({
+    aiModel: a.ai.model('Claude 3 Haiku'),
+    systemPrompt: 'You are a helpful health assistant specializing in blood pressure management. Provide accurate, supportive information about blood pressure readings, lifestyle recommendations, and general health guidance. Always remind users to consult healthcare professionals for medical advice. Be supportive and encouraging while maintaining medical accuracy.',
+  })
+  .authorization((allow) => allow.owner()),
   Todo: a
     .model({
       content: a.string(),

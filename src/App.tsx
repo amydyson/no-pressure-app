@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import Home from "./components/common/Home";
 import SignOut from "./components/common/SignOut";
+import ChatDrawer from "./components/common/ChatDrawer";
 import bookIcon from "./assets/images/avatar-icons/book.png";
 import catIcon from "./assets/images/avatar-icons/cat.png";
 import dogIcon from "./assets/images/avatar-icons/dog.png";
@@ -12,7 +13,8 @@ import moonIcon from "./assets/images/avatar-icons/moon.png";
 import sunIcon from "./assets/images/avatar-icons/sun.png";
 import umbrellaIcon from "./assets/images/avatar-icons/umbrella.png";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Toolbar, Typography, Box, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, ThemeProvider, Fab } from "@mui/material";
+import ChatIcon from '@mui/icons-material/Chat';
 import { theme } from "./theme";
 import logo from "./assets/images/illustrations/logo-pumpkin.png";
 import LanguageContext from "./LanguageContext";
@@ -162,6 +164,7 @@ import { fetchAuthSession } from "aws-amplify/auth";
 function App() {
   const [language, setLanguage] = React.useState('pt');
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   React.useEffect(() => {
     document.title = language === 'pt' ? 'Sem Pressão' : 'No Pressure';
@@ -206,6 +209,27 @@ function App() {
             <CssBaseline />
             <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
             <Home />
+            
+            {/* Global Chat Button */}
+            <Fab
+              color="primary"
+              aria-label="chat"
+              onClick={() => setChatOpen(true)}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+                bgcolor: '#BE550F',
+                '&:hover': {
+                  bgcolor: '#9A4409'
+                }
+              }}
+            >
+              <ChatIcon />
+            </Fab>
+            
+            {/* Global Chat Drawer */}
+            <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} />
           </Box>
         </BrowserRouter>
       </LanguageContext.Provider>
