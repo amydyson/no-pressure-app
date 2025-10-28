@@ -30,8 +30,8 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
 
     try {
       // Check if conversation API is available
-      if (client.conversations?.chat?.sendMessage) {
-        const response = await client.conversations.chat.sendMessage({
+      if ((client as any).conversations?.chat?.sendMessage) {
+        const response = await (client as any).conversations.chat.sendMessage({
           conversationId,
           content: [{ text: userMessage }]
         });
@@ -40,7 +40,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
           setConversationId(response.conversationId);
         }
         
-        const aiResponse = response.content?.[0]?.text || (language === 'pt' ? 'Desculpe, não consegui processar sua mensagem.' : 'Sorry, I could not process your message.');
+        const aiResponse = response?.content?.[0]?.text || (language === 'pt' ? 'Desculpe, não consegui processar sua mensagem.' : 'Sorry, I could not process your message.');
         setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: aiResponse }]);
       } else {
         // Fallback when API is not available
