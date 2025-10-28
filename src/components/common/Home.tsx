@@ -82,7 +82,7 @@ function Home() {
       <Routes>
         <Route path="/medico/*" element={<Medico userInfo={userInfo} />} />
         <Route path="/patient/*" element={<PatientRouter userInfo={userInfo} />} />
-        <Route path="/" element={
+        <Route path="*" element={
           group === "Medico" ? (
             <Medico userInfo={userInfo} />
           ) : (
