@@ -23,31 +23,42 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const handleSend = async () => {
     if (!input.trim()) return;
     
-    const userMessage = input;
-    setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'Você' : 'You', text: userMessage }]);
+    const userMessage = input.toLowerCase();
+    setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'Você' : 'You', text: input }]);
     setInput("");
     setLoading(true);
 
-    try {
-      // Simulate AI response for now
-      setTimeout(() => {
-        const responses = [
-          language === 'pt' ? 'Obrigado pela sua pergunta sobre pressão arterial. É importante monitorar regularmente.' : 'Thank you for your blood pressure question. Regular monitoring is important.',
-          language === 'pt' ? 'Para manter uma pressão arterial saudável, recomendo exercícios regulares e uma dieta equilibrada.' : 'To maintain healthy blood pressure, I recommend regular exercise and a balanced diet.',
-          language === 'pt' ? 'Consulte sempre um médico para orientações específicas sobre sua pressão arterial.' : 'Always consult a doctor for specific guidance about your blood pressure.'
+    setTimeout(() => {
+      let response = '';
+      
+      if (userMessage.includes('systolic') || userMessage.includes('sistólica')) {
+        response = language === 'pt' 
+          ? 'A pressão sistólica é o número superior na sua leitura de pressão arterial. Representa a pressão quando seu coração bate e bombeia sangue. Valores normais ficam abaixo de 120 mmHg.' 
+          : 'Systolic pressure is the top number in your blood pressure reading. It represents the pressure when your heart beats and pumps blood. Normal values are below 120 mmHg.';
+      } else if (userMessage.includes('diastolic') || userMessage.includes('diastólica')) {
+        response = language === 'pt'
+          ? 'A pressão diastólica é o número inferior. Representa a pressão quando seu coração relaxa entre as batidas. Valores normais ficam abaixo de 80 mmHg.'
+          : 'Diastolic pressure is the bottom number. It represents the pressure when your heart relaxes between beats. Normal values are below 80 mmHg.';
+      } else if (userMessage.includes('exercise') || userMessage.includes('exercício')) {
+        response = language === 'pt'
+          ? 'Exercícios regulares são ótimos para a pressão arterial! Caminhadas de 30 minutos, natação ou ciclismo podem reduzir a pressão em 4-9 mmHg. Comece devagar e aumente gradualmente.'
+          : 'Regular exercise is great for blood pressure! 30-minute walks, swimming, or cycling can lower pressure by 4-9 mmHg. Start slowly and gradually increase.';
+      } else {
+        const responses = language === 'pt' ? [
+          'Que pergunta interessante! A pressão arterial é influenciada por muitos fatores como dieta, exercícios e estresse.',
+          'Boa pergunta! Manter um peso saudável e reduzir o sódio podem ajudar muito com a pressão arterial.',
+          'Interessante! O estresse pode aumentar temporariamente a pressão. Técnicas de relaxamento como meditação podem ajudar.'
+        ] : [
+          'Great question! Blood pressure is influenced by many factors like diet, exercise, and stress levels.',
+          'Good question! Maintaining a healthy weight and reducing sodium can really help with blood pressure.',
+          'Interesting! Stress can temporarily raise blood pressure. Relaxation techniques like meditation can help.'
         ];
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: randomResponse }]);
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setMessages(msgs => [...msgs, { 
-        sender: language === 'pt' ? 'IA' : 'AI', 
-        text: language === 'pt' ? 'Desculpe, ocorreu um erro. Tente novamente.' : 'Sorry, an error occurred. Please try again.' 
-      }]);
+        response = responses[Math.floor(Math.random() * responses.length)];
+      }
+      
+      setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: response }]);
       setLoading(false);
-    }
+    }, 800);
   };
 
   useEffect(() => {
