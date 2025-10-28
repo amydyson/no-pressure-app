@@ -70,6 +70,23 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
         </Box>
         {/* Right: Desktop - Language dropdown left of Sign Out; Mobile - only Sign Out */}
   <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
+    <button
+      style={{
+        background: '#fff',
+        color: '#2F4F4F',
+        border: 'none',
+        borderRadius: 4,
+        fontWeight: 'bold',
+        fontSize: '1rem',
+        padding: '6px 18px',
+        cursor: 'pointer',
+        marginRight: 8,
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+      }}
+      onClick={() => navigate('/ai-test')}
+    >
+      AI
+    </button>
           {/* Desktop: Language dropdown */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <select

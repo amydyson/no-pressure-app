@@ -1,60 +1,30 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, Typography, Paper } from '@mui/material';
+import { Authenticator, Flex } from '@aws-amplify/ui-react';
+import type { Schema } from './schema';
+import './../app/app.css';
+import { Amplify } from 'aws-amplify';
+import '@aws-amplify-ui-react/styles.css';
+import outputs from '../../amplify/outputs.json';
+import { AIConversation } from '@aws-amplify/ui-react-ai';
+import { generateClient } from 'aws-amplify/api';
+Amplify.configure(outputs)
 
-const AiTest: React.FC = () => {
-  const [input, setInput] = useState('');
-  const [response, setResponse] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+const client =  generateClient<Schema>();
 
-  const handleSend = async () => {
-    setLoading(true);
-    setError('');
-    setResponse('');
-    try {
-      const res = await fetch('/api/ai-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: input }),
-      });
-      if (!res.ok) throw new Error('API error');
-      const data = await res.json();
-      setResponse(data?.result || JSON.stringify(data));
-    } catch (err) {
-      setError((err as Error).message || 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function AITest() {
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 6, p: 2 }}>
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h5" gutterBottom>AI Chat Test</Typography>
-        <TextField
-          label="Ask something"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          fullWidth
-          multiline
-          minRows={2}
-          sx={{ mb: 2 }}
-        />
-        <Button variant="contained" onClick={handleSend} disabled={loading || !input.trim()}>
-          {loading ? 'Sending...' : 'Send'}
-        </Button>
-        {response && (
-          <Box sx={{ mt: 3 }}>
-            <Typography variant="subtitle1">AI Response:</Typography>
-            <Paper sx={{ p: 2, bgcolor: '#f5f5f5' }}>{response}</Paper>
-          </Box>
-        )}
-        {error && (
-          <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>
-        )}
-      </Paper>
-    </Box>
+    <Authenticator>
+      {({ signOut, user }) => (
+        <Flex direction="column" height="100vh">
+          <AIConversation
+            agent={{
+              type: "chat",
+              client,
+            }}
+            user={user}
+            onSignOut={signOut}
+          />
+        </Flex>
+      )}
+    </Authenticator>
   );
-};
-
-export default AiTest;
+}
