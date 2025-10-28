@@ -627,6 +627,10 @@ const Patient = ({ userInfo }: PatientProps) => {
             sx={{ 
               borderColor: '#BE550F',
               color: '#BE550F',
+              minWidth: 120,
+              maxWidth: 180,
+              flex: 1,
+              px: 2,
               '&:hover': {
                 borderColor: '#9A4409',
                 color: '#9A4409',
@@ -661,6 +665,10 @@ const Patient = ({ userInfo }: PatientProps) => {
             sx={{ 
               bgcolor: '#BE550F',
               color: '#FFFFFF',
+              minWidth: 120,
+              maxWidth: 180,
+              flex: 1,
+              px: 2,
               transition: 'background 0.2s',
               '&:hover': {
                 bgcolor: '#F4c430',
@@ -1027,6 +1035,7 @@ const Patient = ({ userInfo }: PatientProps) => {
           {isEditing && (
             <Button 
               variant="outlined" 
+              sx={{ minWidth: 120, maxWidth: 180, flex: 1, px: 2 }}
               onClick={async () => {
                 setSubmitMessage(null);
                 // Restore patient data first, then close modal
@@ -1058,20 +1067,12 @@ const Patient = ({ userInfo }: PatientProps) => {
               {language === 'pt' ? 'Cancelar' : 'Cancel'}
             </Button>
           )}
-          
           <Button 
             type="submit" 
             variant="contained" 
             color="primary"
             disabled={isSubmitting}
-            sx={{ 
-              minWidth: 140,
-              transition: 'background 0.2s',
-              '&:hover': {
-                bgcolor: '#F4c430',
-                color: '#2F4F4F'
-              }
-            }}
+            sx={{ minWidth: 120, maxWidth: 180, flex: 1, px: 2 }}
             onClick={() => {
 
             }}
@@ -1449,7 +1450,8 @@ const Patient = ({ userInfo }: PatientProps) => {
               color="primary"
               disabled={isSubmitting}
               sx={{ 
-                minWidth: 140
+                minWidth: 100,
+                px: 2
               }}
             >
               {isSubmitting 

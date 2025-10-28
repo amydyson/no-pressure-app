@@ -7,6 +7,12 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
+  // This will add a new conversation route to your Amplify Data backend.
+  chat: a.conversation({
+    aiModel: a.ai.model('Claude 3 Haiku'),
+    systemPrompt: 'You are a helpful assistant',
+  })
+  .authorization((allow) => allow.owner()),
   Todo: a
     .model({
       content: a.string(),

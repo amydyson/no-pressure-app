@@ -204,8 +204,9 @@ function App() {
             minHeight: '100vh',
             width: '100vw',
             maxWidth: '100vw',
-            overflowX: 'hidden',
-            position: 'relative'
+            overflowX: 'clip',
+            position: 'relative',
+            overscrollBehaviorX: 'none',
           }}>
             <CssBaseline />
             <NavigationBar language={language} setLanguage={setLanguage} avatar={avatar} />
