@@ -29,22 +29,28 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
     setLoading(true);
 
     try {
-      const response = await client.conversations.chat.sendMessage({
-        conversationId,
-        content: [{ text: userMessage }]
-      });
-      
-      if (!conversationId) {
-        setConversationId(response.conversationId);
+      // Check if conversation API is available
+      if (client.conversations?.chat?.sendMessage) {
+        const response = await client.conversations.chat.sendMessage({
+          conversationId,
+          content: [{ text: userMessage }]
+        });
+        
+        if (!conversationId) {
+          setConversationId(response.conversationId);
+        }
+        
+        const aiResponse = response.content?.[0]?.text || (language === 'pt' ? 'Desculpe, não consegui processar sua mensagem.' : 'Sorry, I could not process your message.');
+        setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: aiResponse }]);
+      } else {
+        // Fallback when API is not available
+        throw new Error('Conversation API not available');
       }
-      
-      const aiResponse = response.content?.[0]?.text || (language === 'pt' ? 'Desculpe, não consegui processar sua mensagem.' : 'Sorry, I could not process your message.');
-      setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: aiResponse }]);
     } catch (error) {
       console.error('Error sending message:', error);
       setMessages(msgs => [...msgs, { 
         sender: language === 'pt' ? 'IA' : 'AI', 
-        text: language === 'pt' ? 'Desculpe, ocorreu um erro. Tente novamente.' : 'Sorry, an error occurred. Please try again.' 
+        text: language === 'pt' ? 'O serviço de IA não está disponível no momento. Tente novamente mais tarde.' : 'AI service is not available at the moment. Please try again later.' 
       }]);
     } finally {
       setLoading(false);
