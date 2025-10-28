@@ -2,10 +2,10 @@ import React, { useState, useContext, useRef, useEffect } from "react";
 import { Drawer, Box, Typography, TextField, Button, List, ListItem, ListItemText, CircularProgress, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import LanguageContext from "../../LanguageContext";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../../../amplify/data/resource";
+// import { generateClient } from "aws-amplify/data";
+// import type { Schema } from "../../../amplify/data/resource";
 
-const client = generateClient<Schema>();
+// const client = generateClient<Schema>();
 
 interface ChatDrawerProps {
   open: boolean;
@@ -17,7 +17,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  // const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const handleSend = async () => {
