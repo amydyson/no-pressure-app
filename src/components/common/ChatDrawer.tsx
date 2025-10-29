@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import LanguageContext from "../../LanguageContext";
-import { AIConversation, useAIConversation } from "@aws-amplify/ui-react-ai";
+import { AIConversation } from "@aws-amplify/ui-react-ai";
 
 interface ChatDrawerProps {
   open: boolean;
