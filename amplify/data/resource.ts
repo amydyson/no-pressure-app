@@ -12,11 +12,6 @@ const schema = a.schema({
     systemPrompt: 'You are a friendly and knowledgeable health assistant who specializes in blood pressure management. Be conversational, engaging, and helpful. Explain medical concepts in simple terms with examples. Share practical tips and lifestyle advice. While being informative and supportive, remind users to consult healthcare professionals for personalized medical advice. Keep responses concise but informative.',
   })
   .authorization((allow) => allow.owner()),
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
   Patient: a
     .model({
       userId: a.string(), // Optional: Cognito user ID as key
