@@ -3,11 +3,7 @@ import React, { useContext } from "react";
 import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import LanguageContext from "../../LanguageContext";
-import { AIConversation } from "@aws-amplify/ui-react-ai";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../../../amplify/data/resource";
-
-const client = generateClient<Schema>();
+import { AIConversation, useAIConversation } from "@aws-amplify/ui-react-ai";
 
 interface ChatDrawerProps {
   open: boolean;
@@ -16,6 +12,15 @@ interface ChatDrawerProps {
 
 const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const { language } = useContext(LanguageContext);
+
+  // Use the Amplify AI conversation hook
+  const [
+    {
+      data: { messages },
+      isLoading,
+    },
+    handleSendMessage,
+  ] = useAIConversation('chat'); // 'chat' is the key for the conversation route in your schema
 
   return (
     <Drawer
@@ -34,7 +39,11 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
           </Box>
         </Box>
         <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
-          <AIConversation client={client} />
+          <AIConversation
+            messages={messages}
+            isLoading={isLoading}
+            handleSendMessage={handleSendMessage}
+          />
         </Box>
       </Box>
     </Drawer>
