@@ -1,71 +1,26 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
-import { Drawer, Box, Typography, TextField, Button, List, ListItem, ListItemText, CircularProgress, IconButton } from "@mui/material";
+
+import React, { useContext } from "react";
+import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import LanguageContext from "../../LanguageContext";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "../../../amplify/data/resource";
-
-const client = generateClient<Schema>();
+import { AIConversation, useAIConversation } from "@aws-amplify/ui-react-ai";
 
 interface ChatDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
+
 const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
   const { language } = useContext(LanguageContext);
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  const sendMessage = async (message: string) => {
-    return await (client as any).conversations.chat.sendMessage({
-      conversationId,
-      content: [{ text: message }]
-    });
-  };
-
-  const handleSend = async () => {
-    if (!input.trim()) return;
-    
-    const userMessage = input;
-    setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'Você' : 'You', text: userMessage }]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      // Check if conversation API is available
-      if ((client as any).conversations?.chat?.sendMessage) {
-        const response = await sendMessage(userMessage);
-        
-        if (!conversationId) {
-          setConversationId(response.conversationId);
-        }
-        
-        const aiResponse = response?.content?.[0]?.text || (language === 'pt' ? 'Desculpe, não consegui processar sua mensagem.' : 'Sorry, I could not process your message.');
-        setMessages(msgs => [...msgs, { sender: language === 'pt' ? 'IA' : 'AI', text: aiResponse }]);
-      } else {
-        // Fallback when API is not available
-        throw new Error('Conversation API not available');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setMessages(msgs => [...msgs, { 
-        sender: language === 'pt' ? 'IA' : 'AI', 
-        text: language === 'pt' ? 'O serviço de IA não está disponível no momento. Tente novamente mais tarde.' : 'AI service is not available at the moment. Please try again later.' 
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (open && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, open]);
+  // Use the Amplify AI conversation hook
+  const [
+    {
+      data: { messages },
+      isLoading,
+    },
+    handleSendMessage,
+  ] = useAIConversation('chat'); // 'chat' is the key for the conversation route in your schema
 
   return (
     <Drawer
@@ -84,48 +39,12 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
           </Box>
         </Box>
         <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
-          <List>
-            {messages.map((msg, idx) => (
-              <ListItem key={idx} alignItems="flex-start">
-                <ListItemText
-                  primary={<Typography sx={{ fontWeight: msg.sender === (language === 'pt' ? 'IA' : 'AI') ? 500 : 'bold', color: msg.sender === (language === 'pt' ? 'IA' : 'AI') ? '#BE550F' : undefined }}>{msg.sender}</Typography>}
-                  secondary={msg.text}
-                />
-              </ListItem>
-            ))}
-            {loading && (
-              <ListItem>
-                <CircularProgress size={24} sx={{ color: '#BE550F', mr: 2 }} />
-                <ListItemText primary={<Typography>{language === 'pt' ? 'IA está pensando...' : 'AI is thinking...'}</Typography>} />
-              </ListItem>
-            )}
-          </List>
-          <Box ref={messagesEndRef} />
-        </Box>
-        <Box sx={{ p: 2, borderTop: '1px solid #eee', display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <TextField
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
-            placeholder={language === 'pt' ? 'Faça uma pergunta sobre pressão arterial' : 'Ask a question about blood pressure'}
-            fullWidth
-            size="medium"
-            multiline
-            minRows={2}
-            maxRows={6}
-            sx={{ bgcolor: '#fff', borderRadius: 1, fontSize: '1.25rem', fontWeight: 700, color: '#1a1a1a', letterSpacing: '0.03em' }}
-            InputProps={{ style: { fontWeight: 700, fontSize: '1.25rem', color: '#1a1a1a', letterSpacing: '0.03em' } }}
-            inputProps={{ style: { fontWeight: 700, fontSize: '1.25rem', color: '#1a1a1a', letterSpacing: '0.03em' } }}
+          <AIConversation
+            messages={messages}
+            isLoading={isLoading}
+            handleSendMessage={handleSendMessage}
+            // Optionally, you can add props for customizing the UI or localization
           />
-          <Button
-            variant="contained"
-            sx={{ bgcolor: '#BE550F', '&:hover': { bgcolor: '#9A4409' }, minWidth: 36, height: 44, px: 1.5, fontSize: '1.25rem', fontWeight: 800, letterSpacing: '0.05em', mt: 1 }}
-            onClick={handleSend}
-            disabled={!input.trim() || loading}
-            fullWidth
-          >
-            {language === 'pt' ? 'Enviar' : 'Send'}
-          </Button>
         </Box>
       </Box>
     </Drawer>
