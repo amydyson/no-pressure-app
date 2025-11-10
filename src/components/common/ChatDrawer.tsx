@@ -51,7 +51,6 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
       const aiMessage: Message = { role: "assistant", content: response };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error: any) {
-      console.error("AI conversation error:", error);
       const errorMessage: Message = {
         role: "assistant",
         content: `Sorry, I encountered an error: ${error.message}`,

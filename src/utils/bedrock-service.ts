@@ -17,8 +17,6 @@ export async function generateText(
   messages: BedrockMessage[]
 ): Promise<string> {
   try {
-    console.log("Sending to Bedrock:", { modelId, messages });
-
     const formattedMessages = messages.map((msg) => ({
       role: msg.role,
       content: msg.content,
@@ -41,8 +39,6 @@ export async function generateText(
     const decodedResponse = new TextDecoder().decode(response.body);
     const responseData = JSON.parse(decodedResponse);
 
-    console.log("Bedrock response:", responseData);
-
     if (
       responseData.content &&
       responseData.content[0] &&
@@ -53,8 +49,6 @@ export async function generateText(
       throw new Error("Invalid response format from Bedrock");
     }
   } catch (error: any) {
-    console.error("Bedrock service error:", error);
-
     switch (error.name) {
       case "ResourceNotFoundException":
         throw new Error(
