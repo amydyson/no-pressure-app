@@ -1,21 +1,15 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
-import { Stack } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 
-/**
- * Backend configuration with AI/Bedrock permissions
- */
 const backend = defineBackend({
   auth,
   data,
 });
 
-// Get the authenticated role from auth
 const authenticatedRole = backend.auth.resources.authenticatedUserIamRole;
 
-// Add Bedrock permissions to authenticated users
 authenticatedRole.addToPrincipalPolicy(new iam.PolicyStatement({
   effect: iam.Effect.ALLOW,
   actions: [
@@ -30,5 +24,4 @@ authenticatedRole.addToPrincipalPolicy(new iam.PolicyStatement({
   ]
 }));
 
-// Export the backend configuration
 export default backend;
