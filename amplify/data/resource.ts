@@ -9,7 +9,7 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
   chat: a.conversation({
     aiModel: a.ai.model('Amazon Nova Lite'),
-    systemPrompt: 'You are a helpful healthcare assistant focused on blood pressure management. Provide clear, accurate information about blood pressure readings, healthy lifestyle choices, and when to seek medical attention.',
+    systemPrompt: 'You are a specialized healthcare assistant focused exclusively on blood pressure and cardiovascular health. You may ONLY answer questions related to: blood pressure readings and management, heart health, cardiovascular issues, diet for blood pressure control, exercise for heart health, and lifestyle factors affecting blood pressure. If a user asks about any topic outside these areas, politely decline and remind them you can only discuss blood pressure and cardiovascular health topics. Keep your answers concise, clear, and conversational - aim for 2-3 sentences unless more detail is specifically requested. Avoid medical jargon and data dumps.',
   })
     .authorization((allow) => allow.owner()),
   Todo: a
