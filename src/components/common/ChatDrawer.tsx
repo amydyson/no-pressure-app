@@ -1,70 +1,50 @@
-import React, { useState } from "react";
-import {
-  Drawer,
-  Box,
-  Typography,
-  IconButton,
-  TextField,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import React from "react";
+import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import SendIcon from "@mui/icons-material/Send";
-import { generateText } from "../../utils/bedrock-service";
+import { createAIHooks } from "@aws-amplify/ui-react-ai";
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "../../../amplify/data/resource";
+
+const client = generateClient<Schema>({
+  authMode: 'userPool',
+});
+
+const { useAIConversation } = createAIHooks(client);
 
 interface ChatDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
 const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [
+    {
+      data: { messages },
+      isLoading,
+    },
+    sendMessage,
+  ] = useAIConversation('chat');
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  React.useEffect(() => {
+    console.log('Messages:', messages);
+    console.log('IsLoading:', isLoading);
+    messages.forEach((msg, idx) => {
+      console.log(`Message ${idx}:`, {
+        role: msg.role,
+        content: msg.content,
+        isLoading: (msg as any).isLoading,
+        id: msg.id,
+      });
+    });
+  }, [messages, isLoading]);
 
-    const userMessage = input.trim();
-    setInput("");
-
-    const newUserMessage: Message = { role: "user", content: userMessage };
-    setMessages((prev) => [...prev, newUserMessage]);
-    setIsLoading(true);
-
+  const handleSendMessage = async (text: string) => {
+    console.log('Sending message:', text);
     try {
-      const formattedMessages: Message[] = [
-        ...messages.slice(-5),
-        newUserMessage,
-      ];
-
-      const response = await generateText(
-        "anthropic.claude-3-haiku-20240307v1:0",
-        formattedMessages
-      );
-
-      const aiMessage: Message = { role: "assistant", content: response };
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (error: any) {
-      const errorMessage: Message = {
-        role: "assistant",
-        content: `Sorry, I encountered an error: ${error.message}`,
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+      await sendMessage({ content: [{ text }] });
+      console.log('Message sent successfully');
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
   };
 
@@ -93,104 +73,81 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
           </IconButton>
         </Box>
 
-        {/* Conversation Area */}
-        <Box
-          sx={{
-            flex: 1,
-            p: 2,
-            overflow: "auto",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {messages.length === 0 ? (
-            <Box sx={{ textAlign: "center", color: "text.secondary", mt: 4 }}>
-              <Typography variant="body1" gutterBottom>
-                Start a conversation
-              </Typography>
-              <Typography variant="body2">
-                Ask me anything and I'll help!
-              </Typography>
-            </Box>
-          ) : (
-            messages.map((message, index) => (
+        <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
+          {/* Display messages */}
+          {messages.map((message, index) => {
+            const messageLoading = (message as any).isLoading;
+            return (
               <Box
                 key={index}
                 sx={{
                   mb: 2,
-                  alignSelf:
-                    message.role === "user" ? "flex-end" : "flex-start",
-                  maxWidth: "80%",
+                  p: 2,
+                  bgcolor: message.role === 'user' ? '#e3f2fd' : '#f5f5f5',
+                  borderRadius: 2,
                 }}
               >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    p: 1.5,
-                    borderRadius: 2,
-                    bgcolor: message.role === "user" ? "#BE550F" : "grey.100",
-                    color: message.role === "user" ? "white" : "text.primary",
-                    wordWrap: "break-word",
-                  }}
-                >
-                  {message.content}
+                <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                  {message.role === 'user' ? 'You' : 'AI'}
+                  {messageLoading && ' (loading...)'}
+                </Typography>
+                <Typography>
+                  {message.content.map((content: any) => content.text || '').join('') || 
+                    (messageLoading ? 'Thinking...' : 'No response')}
                 </Typography>
               </Box>
-            ))
-          )}
-
-          {/* Loading indicator */}
+            );
+          })}
           {isLoading && (
-            <Box sx={{ alignSelf: "flex-start", maxWidth: "80%" }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  p: 1.5,
-                  borderRadius: 2,
-                  bgcolor: "grey.100",
-                  color: "text.primary",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <CircularProgress size={16} sx={{ mr: 1 }} />
-                AI is thinking...
-              </Typography>
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+              <Typography variant="body2" color="text.secondary">AI is thinking...</Typography>
             </Box>
           )}
         </Box>
 
-        {/* Input Area */}
-        <Box sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <TextField
-              fullWidth
-              size="small"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message here..."
+        <Box sx={{ p: 2, borderTop: '1px solid #eee' }}>
+          <Box
+            component="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const input = form.elements.namedItem('message') as HTMLInputElement;
+              if (input.value.trim()) {
+                handleSendMessage(input.value);
+                input.value = '';
+              }
+            }}
+            sx={{ display: 'flex', gap: 1 }}
+          >
+            <input
+              name="message"
+              type="text"
+              placeholder="Type your message..."
               disabled={isLoading}
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                fontSize: '14px',
+              }}
             />
-            <Button
-              variant="contained"
-              onClick={handleSend}
-              disabled={isLoading || !input.trim()}
-              sx={{
-                bgcolor: "#BE550F",
-                "&:hover": {
-                  bgcolor: "#a0440d",
-                },
-                minWidth: "auto",
-                px: 2,
+            <button
+              type="submit"
+              disabled={isLoading}
+              style={{
+                padding: '12px 24px',
+                backgroundColor: '#BE550F',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold',
               }}
             >
-              {isLoading ? (
-                <CircularProgress size={20} sx={{ color: "white" }} />
-              ) : (
-                <SendIcon />
-              )}
-            </Button>
+              Send
+            </button>
           </Box>
         </Box>
       </Box>
@@ -199,3 +156,4 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
 };
 
 export default ChatDrawer;
+
