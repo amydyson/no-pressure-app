@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Drawer, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { createAIHooks } from "@aws-amplify/ui-react-ai";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../../amplify/data/resource";
+import LanguageContext from "../../LanguageContext";
 
 const client = generateClient<Schema>({
   authMode: 'userPool',
@@ -17,6 +18,7 @@ interface ChatDrawerProps {
 }
 
 const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
+  const { language } = useContext(LanguageContext);
   const [
     {
       data: { messages },
@@ -66,7 +68,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
           }}
         >
           <Typography variant="h6" sx={{ flex: 1 }}>
-            Chat
+            {language === 'pt' ? 'Conversa' : 'Chat'}
           </Typography>
           <IconButton onClick={onClose} sx={{ color: "#fff" }}>
             <CloseIcon />
@@ -88,19 +90,20 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
                 }}
               >
                 <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'block', mb: 0.5 }}>
-                  {message.role === 'user' ? 'You' : 'AI'}
-                  {messageLoading && ' (loading...)'}
+                  {message.role === 'user' ? (language === 'pt' ? 'Você' : 'You') : (language === 'pt' ? 'IA' : 'AI')}
                 </Typography>
                 <Typography>
                   {message.content.map((content: any) => content.text || '').join('') || 
-                    (messageLoading ? 'Thinking...' : 'No response')}
+                    (messageLoading ? (language === 'pt' ? 'Pensando...' : 'Thinking...') : (language === 'pt' ? 'Sem resposta' : 'No response'))}
                 </Typography>
               </Box>
             );
           })}
           {isLoading && (
             <Box sx={{ textAlign: 'center', py: 2 }}>
-              <Typography variant="body2" color="text.secondary">AI is thinking...</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {language === 'pt' ? 'IA está pensando...' : 'AI is thinking...'}
+              </Typography>
             </Box>
           )}
         </Box>
@@ -122,7 +125,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
             <input
               name="message"
               type="text"
-              placeholder="Type your message..."
+              placeholder={language === 'pt' ? 'Digite sua mensagem...' : 'Type your message...'}
               disabled={isLoading}
               style={{
                 flex: 1,
@@ -146,7 +149,7 @@ const ChatDrawer: React.FC<ChatDrawerProps> = ({ open, onClose }) => {
                 fontWeight: 'bold',
               }}
             >
-              Send
+              {language === 'pt' ? 'Enviar' : 'Send'}
             </button>
           </Box>
         </Box>
