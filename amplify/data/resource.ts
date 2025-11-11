@@ -8,7 +8,7 @@ specifies that any user authenticated via an API key can "create", "read",
 =========================================================================*/
 const schema = a.schema({
   chat: a.conversation({
-    aiModel: a.ai.model('Claude 3 Sonnet'),
+    aiModel: a.ai.model('Amazon Nova Lite'),
     systemPrompt: 'You are a helpful healthcare assistant focused on blood pressure management. Provide clear, accurate information about blood pressure readings, healthy lifestyle choices, and when to seek medical attention.',
   })
     .authorization((allow) => allow.owner()),
