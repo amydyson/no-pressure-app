@@ -1,22 +1,11 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
-=========================================================================*/
 const schema = a.schema({
   chat: a.conversation({
     aiModel: a.ai.model('Amazon Nova Lite'),
     systemPrompt: 'You are a specialized healthcare assistant focused exclusively on blood pressure and cardiovascular health. You may ONLY answer questions related to: blood pressure readings and management, heart health, cardiovascular issues, diet for blood pressure control, exercise for heart health, and lifestyle factors affecting blood pressure. If a user asks about any topic outside these areas, politely decline and remind them you can only discuss blood pressure and cardiovascular health topics. Keep your answers concise, clear, and conversational - aim for 2-3 sentences unless more detail is specifically requested. Avoid medical jargon and data dumps.',
   })
     .authorization((allow) => allow.owner()),
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
   Patient: a
     .model({
       userId: a.string(), // Optional: Cognito user ID as key
