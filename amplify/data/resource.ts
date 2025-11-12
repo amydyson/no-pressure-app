@@ -8,20 +8,20 @@ const schema = a.schema({
     .authorization((allow) => allow.owner()),
   Patient: a
     .model({
-      userId: a.string(), // Optional: Cognito user ID as key
+      userId: a.string(),
       firstName: a.string().required(),
       lastName: a.string().required(),
-      email: a.string(), // Optional: store email for easy reference
-      avatar: a.string(), // Optional: avatar selection (book, cat, dog, flower)
-  gender: a.string(), // Optional: male or female
-  isSmoker: a.boolean(), // Optional: smoker status
-  dateOfBirth: a.string(), // Optional: patient date of birth
-  height: a.float(), // Optional: height in cm
-  weight: a.float(), // Optional: weight in kg
-  exercisesDaily: a.boolean(), // Optional: exercises 30+ minutes daily
-  language: a.string(), // Preferred language (en or pt)
+      email: a.string(),
+      avatar: a.string(),
+      gender: a.string(),
+      isSmoker: a.boolean(),
+      dateOfBirth: a.string(),
+      height: a.float(),
+      weight: a.float(),
+      exercisesDaily: a.boolean(),
+      language: a.string(),
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    .authorization((allow) => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
