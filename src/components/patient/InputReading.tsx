@@ -20,7 +20,6 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
   const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
   const dateInputRef = useRef<HTMLInputElement>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessView, setShowSuccessView] = useState(false);
   // Success view after submission
   if (showSuccessView) {
@@ -74,7 +73,6 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
       </Typography>
       <Box component="form" sx={{ mt: 3, width: '100%', maxWidth: 340, display: 'flex', flexDirection: 'column', gap: 2 }} onSubmit={async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
         
         const formData = new FormData(e.currentTarget);
         const systolic = parseInt(formData.get('systolic') as string);
@@ -96,8 +94,6 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
         } catch (error) {
           console.error('Error saving reading:', error);
           alert(language === 'pt' ? 'Erro ao salvar leitura' : 'Error saving reading');
-        } finally {
-          setIsSubmitting(false);
         }
       }}>
         <label style={{ fontWeight: 500, color: '#2F4F4F' }}>
