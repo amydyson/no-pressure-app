@@ -46,16 +46,14 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
           </Button>
           
           <Button 
-            variant="outlined" 
+            variant="contained" 
             size="large"
             onClick={() => navigate('/patient/blood-pressure-history')}
             sx={{ 
-              borderColor: '#BE550F',
-              color: '#BE550F',
+              bgcolor: '#BE550F',
+              color: '#FFFFFF',
               '&:hover': {
-                borderColor: '#9A4409',
-                color: '#9A4409',
-                bgcolor: 'rgba(190, 85, 15, 0.04)'
+                bgcolor: '#9A4409'
               }
             }}
           >
