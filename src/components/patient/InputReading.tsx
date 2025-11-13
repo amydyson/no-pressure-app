@@ -1,4 +1,4 @@
-import { Box, Typography, Accordion, AccordionSummary, AccordionDetails, Alert, Button } from "@mui/material";
+import { Box, Typography, Accordion, AccordionSummary, AccordionDetails, Button } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +21,6 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
   const navigate = useNavigate();
   const dateInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   const [showSuccessView, setShowSuccessView] = useState(false);
   // Success view after submission
   if (showSuccessView) {
@@ -76,7 +75,6 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
       <Box component="form" sx={{ mt: 3, width: '100%', maxWidth: 340, display: 'flex', flexDirection: 'column', gap: 2 }} onSubmit={async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setSubmitMessage(null);
         
         const formData = new FormData(e.currentTarget);
         const systolic = parseInt(formData.get('systolic') as string);
@@ -97,10 +95,7 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
           (e.target as HTMLFormElement).reset();
         } catch (error) {
           console.error('Error saving reading:', error);
-          setSubmitMessage({
-            type: 'error',
-            text: language === 'pt' ? 'Erro ao salvar leitura' : 'Error saving reading'
-          });
+          alert(language === 'pt' ? 'Erro ao salvar leitura' : 'Error saving reading');
         } finally {
           setIsSubmitting(false);
         }
