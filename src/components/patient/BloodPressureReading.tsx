@@ -40,9 +40,9 @@ const BloodPressureReading = () => {
           style={{
             padding: '12px 0',
             width: '100%',
-            background: '#fff',
-            color: '#BE550F',
-            border: '2px solid #BE550F',
+            background: '#BE550F',
+            color: '#fff',
+            border: 'none',
             borderRadius: 6,
             fontSize: '1.1rem',
             fontWeight: 600,

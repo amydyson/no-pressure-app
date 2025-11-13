@@ -33,20 +33,16 @@ const HowToGetAReading = () => {
           : 'To get an accurate blood pressure reading, sit and relax for a few minutes. Place the cuff on your arm, keep your arm at heart level, and follow your device instructions. Record both the systolic and diastolic values.'}
       </Typography>
       
-      <Button 
-        variant="contained" 
-        size="large"
+      <button 
         onClick={() => navigate('/patient/input-reading')}
-        sx={{ 
-          bgcolor: '#BE550F',
-          color: '#FFFFFF',
-          '&:hover': {
-            bgcolor: '#9A4409'
+        ref={(el) => {
+          if (el) {
+            el.style.cssText = 'padding: 12px 24px; background-color: #BE550F !important; color: #FFFFFF !important; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer;';
           }
         }}
       >
         {language === 'pt' ? 'Inserir Leitura' : 'Input Reading'}
-      </Button>
+      </button>
     </Box>
   );
 };
