@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import LanguageContext from "../../LanguageContext";
-import bpMeasurementImage from "../../assets/images/illustrations/bp-measurement.png";
+import bpMeasurementEngImage from "../../assets/images/illustrations/bp-measure-eng.png";
 import bpMeasurementPtImage from "../../assets/images/illustrations/bp-measure-pt.png";
 
 const HowToGetAReading = () => {
@@ -16,7 +16,7 @@ const HowToGetAReading = () => {
       
       <Box sx={{ mb: 3, textAlign: 'center' }}>
         <img 
-          src={language === 'pt' ? bpMeasurementPtImage : bpMeasurementImage}
+          src={language === 'pt' ? bpMeasurementPtImage : bpMeasurementEngImage}
           alt={language === 'pt' ? 'Como medir pressão arterial' : 'How to measure blood pressure'}
           style={{ 
             maxWidth: '100%', 
