@@ -22,6 +22,14 @@ const schema = a.schema({
       language: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
+  BloodPressureReading: a
+    .model({
+      userId: a.string(),
+      systolic: a.integer().required(),
+      diastolic: a.integer().required(),
+      readingDate: a.string().required(),
+    })
+    .authorization((allow) => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -48,7 +56,7 @@ cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
 =========================================================================*/
 
 /*
-"use client"
+"use client"y
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 
