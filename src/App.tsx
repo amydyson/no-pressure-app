@@ -36,8 +36,8 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
     setAnchorEl(null);
   };
 
-  const handleGameClick = () => {
-    navigate('/patient/game');
+  const handleGamesClick = () => {
+    navigate('/patient/games');
     handleMenuClose();
   };
 
@@ -125,8 +125,8 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
               }
             }}
           >
-            <MenuItem onClick={handleGameClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
-              {language === 'pt' ? 'Jogo' : 'Game'}
+            <MenuItem onClick={handleGamesClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
+              {language === 'pt' ? 'Jogos' : 'Games'}
             </MenuItem>
             <MenuItem onClick={handleMedicoClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
               {language === 'pt' ? 'Profissionais de Saúde' : 'Medical Professionals'}
