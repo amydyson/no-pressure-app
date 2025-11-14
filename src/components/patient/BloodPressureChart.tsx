@@ -17,7 +17,55 @@ const BloodPressureChart = ({ systolic, diastolic, width = 500, height = 400 }: 
   const yPercent = 85 - ((systolic - 80) / 140) * 70; // 80-220 systolic
 
   return (
-    <Box sx={{ position: 'relative', width: width, height: height, margin: '0 auto' }}>
+    <Box sx={{ position: 'relative', width: width, margin: '0 auto' }}>
+      {/* Emergency warning */}
+      {(systolic >= 180 || diastolic >= 120) && (
+        <Box sx={{ 
+          backgroundColor: '#FF0000', 
+          color: '#FFFFFF', 
+          padding: '12px', 
+          borderRadius: '8px', 
+          textAlign: 'center', 
+          marginBottom: '16px',
+          fontWeight: 'bold',
+          fontSize: '16px'
+        }}>
+          {language === 'pt' 
+            ? '⚠️ EMERGÊNCIA: Ligue 112 imediatamente!' 
+            : '⚠️ EMERGENCY: Call 112 immediately!'}
+        </Box>
+      )}
+      
+      {/* Doctor consultation warning */}
+      {(systolic >= 140 || diastolic >= 90) && (systolic < 180 && diastolic < 120) && (
+        <Box sx={{ 
+          backgroundColor: '#FFC107', 
+          color: '#000000', 
+          padding: '12px', 
+          borderRadius: '8px', 
+          textAlign: 'center', 
+          marginBottom: '16px',
+          fontWeight: 'bold',
+          fontSize: '16px'
+        }}>
+          {language === 'pt' 
+            ? '⚠️ ATENÇÃO: Consulte um médico' 
+            : '⚠️ WARNING: Consult a doctor'}
+        </Box>
+      )}
+      
+      {/* Reading values display */}
+      <Box sx={{ 
+        textAlign: 'center', 
+        marginBottom: '16px',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        color: '#333'
+      }}>
+        {language === 'pt' ? 'Sua leitura: ' : 'Your reading: '}{systolic}/{diastolic} mmHg
+      </Box>
+      
+      <Box sx={{ width: width, height: height }}>
       <svg width={width} height={height} style={{ backgroundColor: '#f8f9fa', border: '1px solid #ddd' }}>
         {/* Background zones */}
         <rect x="15%" y="15%" width="70%" height="20%" fill="#F44336" opacity="0.3" />
@@ -73,14 +121,15 @@ const BloodPressureChart = ({ systolic, diastolic, width = 500, height = 400 }: 
           {language === 'pt' ? 'NORMAL' : 'NORMAL'}
         </text>
         
-        {/* Reading dot */}
-        <circle cx={`${xPercent}%`} cy={`${yPercent}%`} r="8" fill="#FF0000" fillOpacity="0.7" stroke="#FFF" strokeWidth="3" />
+        {/* Reading marker - red X */}
+        <g transform={`translate(${width * xPercent / 100}, ${height * yPercent / 100})`}>
+          <line x1="-8" y1="-8" x2="8" y2="8" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
+          <line x1="8" y1="-8" x2="-8" y2="8" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
+        </g>
         
-        {/* Reading values display */}
-        <text x={`${xPercent > 70 ? xPercent - 8 : xPercent + 8}%`} y={`${yPercent < 30 ? yPercent + 8 : yPercent - 8}%`} fontSize="12" fontWeight="bold" fill="#000" textAnchor={xPercent > 70 ? 'end' : 'start'}>
-          {systolic}/{diastolic}
-        </text>
+
       </svg>
+      </Box>
     </Box>
   );
 };
