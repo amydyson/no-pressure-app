@@ -67,8 +67,32 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
             </Typography>
           </Box>
         </Box>
-        {/* Right: Desktop - Language dropdown left of Sign Out; Mobile - only Sign Out */}
+        {/* Right: Desktop - Medical Professionals, Game, Language dropdown left of Sign Out; Mobile - only Sign Out */}
   <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
+          <Typography 
+            variant="body1" 
+            onClick={() => navigate('/medico')}
+            sx={{ 
+              color: '#FFFFFF', 
+              fontWeight: 'bold', 
+              cursor: 'pointer',
+              '&:hover': { textDecoration: 'underline' }
+            }}
+          >
+            {language === 'pt' ? 'Profissionais de Saúde' : 'Medical Professionals'}
+          </Typography>
+          <Typography 
+            variant="body1" 
+            onClick={() => navigate('/patient/game')}
+            sx={{ 
+              color: '#FFFFFF', 
+              fontWeight: 'bold', 
+              cursor: 'pointer',
+              '&:hover': { textDecoration: 'underline' }
+            }}
+          >
+            {language === 'pt' ? 'Jogo' : 'Game'}
+          </Typography>
           {/* Desktop: Language dropdown */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <select

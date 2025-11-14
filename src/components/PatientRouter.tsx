@@ -4,6 +4,8 @@ import BloodPressureReading from "./patient/BloodPressureReading";
 import InputReading from "./patient/InputReading";
 import HowToGetAReading from "./patient/HowToGetAReading";
 import BloodPressureHistory from "./patient/BloodPressureHistory";
+import BloodPressureGame from "./patient/BloodPressureGame";
+import WhenToCall112 from "./patient/WhenToCall112";
 
 interface PatientRouterProps {
   userInfo: {
@@ -28,6 +30,8 @@ const PatientRouter = ({ userInfo }: PatientRouterProps) => {
       <Route path="input-reading" element={<InputReading userInfo={userInfo} />} />
       <Route path="how-to-get-a-reading" element={<HowToGetAReading />} />
       <Route path="blood-pressure-history" element={<BloodPressureHistory userInfo={userInfo} />} />
+      <Route path="game" element={<BloodPressureGame />} />
+      <Route path="when-to-call-112" element={<WhenToCall112 />} />
       <Route path="*" element={<Navigate to="/patient" replace />} />
     </Routes>
   );

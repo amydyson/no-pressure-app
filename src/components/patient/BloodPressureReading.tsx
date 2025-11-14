@@ -53,19 +53,18 @@ const BloodPressureReading = ({ userInfo }: BloodPressureReadingProps) => {
         alt="Blood Pressure Test"
         style={{ maxWidth: 320, width: '100%', height: 'auto', marginTop: 24, marginBottom: 24 }}
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2, width: '100%', maxWidth: 320 }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mt: 2, width: '100%', maxWidth: 400 }}>
         <button
           style={{
-            padding: '12px 0',
+            padding: '12px 8px',
             width: '100%',
             background: '#BE550F',
             color: '#fff',
             border: 'none',
             borderRadius: 6,
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             fontWeight: 600,
-            cursor: 'pointer',
-            marginBottom: 8
+            cursor: 'pointer'
           }}
           onClick={() => navigate('/patient/input-reading')}
         >
@@ -73,13 +72,13 @@ const BloodPressureReading = ({ userInfo }: BloodPressureReadingProps) => {
         </button>
         <button
           style={{
-            padding: '12px 0',
+            padding: '12px 8px',
             width: '100%',
             background: '#BE550F',
             color: '#fff',
             border: 'none',
             borderRadius: 6,
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             fontWeight: 600,
             cursor: 'pointer'
           }}
@@ -87,17 +86,32 @@ const BloodPressureReading = ({ userInfo }: BloodPressureReadingProps) => {
         >
           {language === 'pt' ? 'Como Obter uma Leitura' : 'How to Get a Reading'}
         </button>
-        
+        <button
+          style={{
+            padding: '12px 8px',
+            width: '100%',
+            background: '#BE550F',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 6,
+            fontSize: '1rem',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+          onClick={() => navigate('/patient/when-to-call-112')}
+        >
+          {language === 'pt' ? 'Quando Ligar 112' : 'When to call 112'}
+        </button>
         {hasReadings && (
           <button
             style={{
-              padding: '12px 0',
+              padding: '12px 8px',
               width: '100%',
               background: '#BE550F',
               color: '#fff',
               border: 'none',
               borderRadius: 6,
-              fontSize: '1.1rem',
+              fontSize: '1rem',
               fontWeight: 600,
               cursor: 'pointer'
             }}
