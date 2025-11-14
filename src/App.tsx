@@ -12,7 +12,7 @@ import moonIcon from "./assets/images/avatar-icons/moon.png";
 import sunIcon from "./assets/images/avatar-icons/sun.png";
 import umbrellaIcon from "./assets/images/avatar-icons/umbrella.png";
 import CssBaseline from "@mui/material/CssBaseline";
-import { AppBar, Toolbar, Typography, Box, ThemeProvider, Fab } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, ThemeProvider, Fab, Menu, MenuItem } from "@mui/material";
 import ChatIcon from '@mui/icons-material/Chat';
 import ChatDrawer from "./components/common/ChatDrawer";
 import { theme } from "./theme";
@@ -21,9 +21,39 @@ import LanguageContext from "./LanguageContext";
 
 function NavigationBar({ language, setLanguage, avatar }: { language: string, setLanguage: (lang: string) => void, avatar?: string | null }) {
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const handleLogoClick = () => {
     navigate('/');
+  };
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleGameClick = () => {
+    navigate('/patient/game');
+    handleMenuClose();
+  };
+
+  const handleMedicoClick = () => {
+    navigate('/medico');
+    handleMenuClose();
+  };
+
+  const handleBloodPressureClick = () => {
+    navigate('/patient/blood-pressure');
+    handleMenuClose();
+  };
+
+  const handlePatientInfoClick = () => {
+    navigate('/');
+    handleMenuClose();
   };
 
   // Header text translations
@@ -67,32 +97,47 @@ function NavigationBar({ language, setLanguage, avatar }: { language: string, se
             </Typography>
           </Box>
         </Box>
-        {/* Right: Desktop - Medical Professionals, Game, Language dropdown left of Sign Out; Mobile - only Sign Out */}
+        {/* Right: Menu, Language dropdown left of Sign Out; Mobile - only Sign Out */}
   <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 'auto', md: 2 }, gap: 2 }}>
+          {/* Menu Dropdown */}
           <Typography 
             variant="body1" 
-            onClick={() => navigate('/medico')}
+            onClick={handleMenuClick}
             sx={{ 
               color: '#FFFFFF', 
-              fontWeight: 'bold', 
+              fontWeight: 'bold',
               cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
               '&:hover': { textDecoration: 'underline' }
             }}
           >
-            {language === 'pt' ? 'Profissionais de Saúde' : 'Medical Professionals'}
+            Menu
           </Typography>
-          <Typography 
-            variant="body1" 
-            onClick={() => navigate('/patient/game')}
-            sx={{ 
-              color: '#FFFFFF', 
-              fontWeight: 'bold', 
-              cursor: 'pointer',
-              '&:hover': { textDecoration: 'underline' }
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            sx={{
+              '& .MuiPaper-root': {
+                bgcolor: '#2F4F4F',
+                color: '#FFFFFF'
+              }
             }}
           >
-            {language === 'pt' ? 'Jogo' : 'Game'}
-          </Typography>
+            <MenuItem onClick={handleGameClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
+              {language === 'pt' ? 'Jogo' : 'Game'}
+            </MenuItem>
+            <MenuItem onClick={handleMedicoClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
+              {language === 'pt' ? 'Profissionais de Saúde' : 'Medical Professionals'}
+            </MenuItem>
+            <MenuItem onClick={handleBloodPressureClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
+              {language === 'pt' ? 'Leitura de Pressão Arterial' : 'Blood Pressure Reading'}
+            </MenuItem>
+            <MenuItem onClick={handlePatientInfoClick} sx={{ color: '#FFFFFF', '&:hover': { bgcolor: '#3F5F5F' } }}>
+              {language === 'pt' ? 'Informações do Paciente' : 'Patient Information'}
+            </MenuItem>
+          </Menu>
           {/* Desktop: Language dropdown */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <select
