@@ -149,46 +149,60 @@ const BloodPressureHistory = ({ userInfo }: BloodPressureHistoryProps) => {
   const generateAIAssessment = async (readings: Schema["BloodPressureReading"]["type"][]) => {
     setIsAnalyzing(true);
     try {
-      // Simple trend analysis
-      const recent = readings.slice(0, 3);
-      const older = readings.slice(3, 6);
+      // Sort readings chronologically (oldest first)
+      const chronological = [...readings].sort((a, b) => {
+        const dateA = new Date(a.readingDate);
+        const dateB = new Date(b.readingDate);
+        return dateA.getTime() - dateB.getTime();
+      });
       
-      const recentAvgSys = recent.reduce((sum, r) => sum + r.systolic, 0) / recent.length;
-      const recentAvgDia = recent.reduce((sum, r) => sum + r.diastolic, 0) / recent.length;
+      const latest = chronological[chronological.length - 1];
+      const earliest = chronological[0];
       
       let assessment = "";
       
-      if (older.length > 0) {
-        const olderAvgSys = older.reduce((sum, r) => sum + r.systolic, 0) / older.length;
-        const olderAvgDia = older.reduce((sum, r) => sum + r.diastolic, 0) / older.length;
+      // Analyze trend over time
+      if (chronological.length >= 3) {
+        const sysTrend = latest.systolic - earliest.systolic;
+        const diaTrend = latest.diastolic - earliest.diastolic;
         
-        const sysTrend = recentAvgSys - olderAvgSys;
-        const diaTrend = recentAvgDia - olderAvgDia;
-        
-        if (sysTrend < -5 || diaTrend < -3) {
-          assessment = language === 'pt' 
-            ? 'Sua pressão arterial está melhorando nas últimas leituras. Continue com os bons hábitos!'
-            : 'Your blood pressure is improving in recent readings. Keep up the good habits!';
-        } else if (sysTrend > 5 || diaTrend > 3) {
+        // Describe the trend
+        if (sysTrend < -10 || diaTrend < -5) {
           assessment = language === 'pt'
-            ? 'Sua pressão arterial está aumentando recentemente. Considere consultar um médico.'
-            : 'Your blood pressure is increasing recently. Consider consulting a doctor.';
+            ? 'Sua pressão arterial mostrou uma melhoria significativa ao longo do tempo.'
+            : 'Your blood pressure has shown significant improvement over time.';
+        } else if (sysTrend > 10 || diaTrend > 5) {
+          assessment = language === 'pt'
+            ? 'Sua pressão arterial tem aumentado ao longo do tempo.'
+            : 'Your blood pressure has been increasing over time.';
         } else {
           assessment = language === 'pt'
-            ? 'Sua pressão arterial está relativamente estável nas últimas leituras.'
-            : 'Your blood pressure is relatively stable in recent readings.';
+            ? 'Sua pressão arterial tem se mantido relativamente estável.'
+            : 'Your blood pressure has remained relatively stable.';
         }
       }
       
-      // Add current level assessment
-      if (recentAvgSys >= 140 || recentAvgDia >= 90) {
+      // Assess current level using correct thresholds
+      if (latest.systolic >= 180 || latest.diastolic >= 120) {
         assessment += language === 'pt'
-          ? ' Suas leituras recentes estão elevadas.'
-          : ' Your recent readings are elevated.';
-      } else if (recentAvgSys < 120 && recentAvgDia < 80) {
+          ? ' Sua leitura mais recente está em nível de crise - procure atendimento médico imediatamente.'
+          : ' Your most recent reading is at crisis level - seek immediate medical attention.';
+      } else if (latest.systolic >= 140 || latest.diastolic >= 90) {
         assessment += language === 'pt'
-          ? ' Suas leituras recentes estão na faixa normal.'
-          : ' Your recent readings are in the normal range.';
+          ? ' Sua leitura atual indica pressão alta - consulte um médico.'
+          : ' Your current reading indicates high blood pressure - consult a doctor.';
+      } else if (latest.systolic >= 130 || latest.diastolic > 80) {
+        assessment += language === 'pt'
+          ? ' Sua leitura atual está em estágio 1 de hipertensão - monitore regularmente.'
+          : ' Your current reading shows stage 1 hypertension - monitor regularly.';
+      } else if (latest.systolic >= 120 && latest.diastolic <= 80) {
+        assessment += language === 'pt'
+          ? ' Sua leitura atual está elevada - adote hábitos saudáveis.'
+          : ' Your current reading is elevated - adopt healthy habits.';
+      } else {
+        assessment += language === 'pt'
+          ? ' Sua leitura atual está na faixa normal - continue os bons hábitos.'
+          : ' Your current reading is in the normal range - keep up the good habits.';
       }
       
       setAiAssessment(assessment);

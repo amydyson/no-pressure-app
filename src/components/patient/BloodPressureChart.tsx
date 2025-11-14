@@ -12,9 +12,12 @@ interface BloodPressureChartProps {
 const BloodPressureChart = ({ systolic, diastolic, width = 500, height = 400 }: BloodPressureChartProps) => {
   const { language } = useContext(LanguageContext);
 
-  // Position dot based on the specified ranges
-  const xPercent = 15 + ((diastolic - 40) / 60) * 70; // 40-100 diastolic
-  const yPercent = 85 - ((systolic - 70) / 120) * 70; // 70-190 systolic
+  // Position dot based on the specified ranges with bounds checking
+  const xPercent = Math.max(15, Math.min(85, 15 + ((diastolic - 40) / 60) * 70)); // 40-100 diastolic
+  const yPercent = Math.max(15, Math.min(85, 85 - ((systolic - 70) / 120) * 70)); // 70-190 systolic
+  
+  // Debug positioning
+  console.log(`BP: ${systolic}/${diastolic}, Position: ${xPercent}%, ${yPercent}%`);
 
   return (
     <Box sx={{ position: 'relative', width: width, margin: '0 auto' }}>
@@ -145,8 +148,10 @@ const BloodPressureChart = ({ systolic, diastolic, width = 500, height = 400 }: 
           
           {/* Reading marker - red X */}
           <g transform={`translate(${width * xPercent / 100}, ${height * yPercent / 100})`}>
-            <line x1="-8" y1="-8" x2="8" y2="8" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
-            <line x1="8" y1="-8" x2="-8" y2="8" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
+            <line x1="-10" y1="-10" x2="10" y2="10" stroke="#FF0000" strokeWidth="5" strokeLinecap="round" />
+            <line x1="10" y1="-10" x2="-10" y2="10" stroke="#FF0000" strokeWidth="5" strokeLinecap="round" />
+            {/* Debug circle to ensure X is visible */}
+            <circle cx="0" cy="0" r="2" fill="#FF0000" />
           </g>
         </svg>
       </Box>
