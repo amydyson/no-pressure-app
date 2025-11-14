@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import LanguageContext from "../../LanguageContext";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../../amplify/data/resource";
+import BloodPressureChart from "./BloodPressureChart";
 
 const client = generateClient<Schema>();
 
@@ -21,13 +22,21 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
   const navigate = useNavigate();
   const dateInputRef = useRef<HTMLInputElement>(null);
   const [showSuccessView, setShowSuccessView] = useState(false);
+  const [lastReading, setLastReading] = useState<{systolic: number, diastolic: number} | null>(null);
   // Success view after submission
   if (showSuccessView) {
     return (
       <Box sx={{ p: 4, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography variant="h4" sx={{ mb: 3, color: '#2F4F4F', textAlign: 'center' }}>
-          {language === 'pt' ? 'Leitura Salva com Sucesso!' : 'Reading Saved Successfully!'}
-        </Typography>
+        {lastReading && (
+          <Box sx={{ mb: 3 }}>
+            <BloodPressureChart 
+              systolic={lastReading.systolic} 
+              diastolic={lastReading.diastolic} 
+              width={500} 
+              height={350} 
+            />
+          </Box>
+        )}
         
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', maxWidth: 340 }}>
           <Button 
@@ -85,6 +94,7 @@ const InputReading = ({ userInfo }: InputReadingProps) => {
             readingDate
           });
           
+          setLastReading({ systolic, diastolic });
           setShowSuccessView(true);
           
           // Clear form
