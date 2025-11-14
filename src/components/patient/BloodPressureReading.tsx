@@ -5,15 +5,7 @@ import { useNavigate } from "react-router-dom";
 import LanguageContext from "../../LanguageContext";
 import bloodPressureImg from "../../assets/images/illustrations/blood-pressure-test.png";
 
-interface BloodPressureReadingProps {
-  userInfo: {
-    userId: string | null;
-    email: string | null;
-    groups: string[];
-  } | null;
-}
-
-const BloodPressureReading = ({ userInfo }: BloodPressureReadingProps) => {
+const BloodPressureReading = () => {
   const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
   return (

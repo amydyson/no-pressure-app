@@ -28,7 +28,7 @@ const PatientRouter = ({ userInfo }: PatientRouterProps) => {
           <p>This page will show patient medical history.</p>
         </div>
       } />
-      <Route path="blood-pressure" element={<BloodPressureReading userInfo={userInfo} />} />
+      <Route path="blood-pressure" element={<BloodPressureReading />} />
       <Route path="input-reading" element={<InputReading userInfo={userInfo} />} />
       <Route path="how-to-get-a-reading" element={<HowToGetAReading />} />
       <Route path="blood-pressure-history" element={<BloodPressureHistory userInfo={userInfo} />} />
