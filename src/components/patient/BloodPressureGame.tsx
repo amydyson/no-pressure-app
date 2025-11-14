@@ -1,5 +1,5 @@
 import { Box, Typography, Button, Card, CardContent, Alert } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LanguageContext from "../../LanguageContext";
 
@@ -21,8 +21,9 @@ const BloodPressureGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [usedQuestions, setUsedQuestions] = useState<number[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number | null>(null);
 
-  const allQuestions: Question[] = [
+  const getAllQuestions = (): Question[] => [
     {
       question: language === 'pt' ? 'Qual é a pressão arterial normal?' : 'What is normal blood pressure?',
       options: language === 'pt' ? ['Menos de 120/80 mmHg', '130/85 mmHg', '140/90 mmHg', '150/95 mmHg'] : ['Less than 120/80 mmHg', '130/85 mmHg', '140/90 mmHg', '150/95 mmHg'],
@@ -115,18 +116,26 @@ const BloodPressureGame = () => {
     }
   ];
 
-  const getRandomQuestion = (): Question => {
-    let availableQuestions = allQuestions.filter((_, index) => !usedQuestions.includes(index));
-    if (availableQuestions.length === 0) {
-      availableQuestions = allQuestions;
+  const getRandomQuestionIndex = (): number => {
+    const allQuestions = getAllQuestions();
+    let availableIndices = allQuestions.map((_, index) => index).filter(index => !usedQuestions.includes(index));
+    if (availableIndices.length === 0) {
+      availableIndices = allQuestions.map((_, index) => index);
       setUsedQuestions([]);
     }
-    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-    const selectedQuestion = availableQuestions[randomIndex];
-    const originalIndex = allQuestions.indexOf(selectedQuestion);
-    setUsedQuestions(prev => [...prev, originalIndex]);
-    return selectedQuestion;
+    const randomIndex = Math.floor(Math.random() * availableIndices.length);
+    const selectedIndex = availableIndices[randomIndex];
+    setUsedQuestions(prev => [...prev, selectedIndex]);
+    return selectedIndex;
   };
+
+  // Update current question when language changes
+  useEffect(() => {
+    if (currentQuestionIndex !== null) {
+      const allQuestions = getAllQuestions();
+      setCurrentQuestion(allQuestions[currentQuestionIndex]);
+    }
+  }, [language, currentQuestionIndex]);
 
   const startGame = () => {
     setGameStarted(true);
@@ -135,7 +144,9 @@ const BloodPressureGame = () => {
     setQuestionNumber(0);
     setUsedQuestions([]);
     setShowFeedback(false);
-    setCurrentQuestion(getRandomQuestion());
+    const newIndex = getRandomQuestionIndex();
+    setCurrentQuestionIndex(newIndex);
+    setCurrentQuestion(getAllQuestions()[newIndex]);
   };
 
   const handleAnswer = (selectedAnswerIndex: number) => {
@@ -166,7 +177,9 @@ const BloodPressureGame = () => {
       // Auto-advance to next question after 3 seconds
       setTimeout(() => {
         setShowFeedback(false);
-        setCurrentQuestion(getRandomQuestion());
+        const newIndex = getRandomQuestionIndex();
+        setCurrentQuestionIndex(newIndex);
+        setCurrentQuestion(getAllQuestions()[newIndex]);
       }, 3000);
     }
   };

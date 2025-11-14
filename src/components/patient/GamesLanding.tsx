@@ -32,7 +32,7 @@ const GamesLanding = () => {
             fontSize: '1.1rem'
           }}
         >
-          {language === 'pt' ? 'Quiz' : 'Quiz'}
+          {language === 'pt' ? 'Questionário' : 'Quiz'}
         </Button>
 
         <Button
