@@ -10,13 +10,8 @@ interface MedicoProps {
   } | null;
 }
 
-const Medico = ({ userInfo }: MedicoProps) => {
+const Medico = ({}: MedicoProps) => {
   const { language } = useContext(LanguageContext);
-  
-  console.log("Medico component loaded for user:", {
-    userId: userInfo?.userId,
-    email: userInfo?.email
-  });
 
   return (
     <div style={{padding: '2rem', textAlign: 'center'}}>

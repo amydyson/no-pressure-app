@@ -1,5 +1,5 @@
 import { Box, Typography, Button, Card, CardContent, Alert } from "@mui/material";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LanguageContext from "../../LanguageContext";
 
